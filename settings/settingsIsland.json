@@ -1,0 +1,10 @@
+{
+  "height": 7,
+  "width": 7,
+  "cntAnimalInCell": 1,
+  "bearCount": 0,
+  "eagleCount": 0,
+  "foxCount": 0,
+  "snakeCount": 1,
+  "wolfCount": 1
+}

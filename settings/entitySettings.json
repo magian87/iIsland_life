@@ -1,0 +1,48 @@
+{
+  "color": "blue",
+  "animalCount": 4,
+
+  "entityCharacteristics": [
+    {
+      "animalClass": "Wolf",
+      "weight":50.0,
+      "speed":3,
+      "saturation":8,
+      "currentSaturation": 8,
+      "emoji":"\uD83D\uDC3A"
+    },
+    {
+      "animalClass": "Eagle",
+      "weight":6.0,
+      "speed":3,
+      "saturation":1,
+      "currentSaturation": 1,
+      "emoji":"\uD83E\uDD85"
+    },
+    {
+      "animalClass": "Snake",
+      "weight":15.0,
+      "speed":1,
+      "saturation":3,
+      "currentSaturation": 8,
+      "emoji":"\uD83D\uDC0D"
+    },
+    {
+      "animalClass": "Fox",
+      "weight":8.0,
+      "speed":2,
+      "saturation":2,
+      "currentSaturation": 8,
+      "emoji":"\uD83E\uDD8A"
+    },
+    {
+      "animalClass": "Bear",
+      "weight":500.0,
+      "speed":2,
+      "saturation":80,
+      "currentSaturation": 8,
+      "emoji":"\uD83D\uDC3B"
+    }
+  ]
+}
+
