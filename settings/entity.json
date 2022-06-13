@@ -2,6 +2,34 @@
   "color": "blue",
   "animalCount": 4,
 
+  "entityIslandCharacteristics": [
+    {
+      "animalClass": "Wolf",
+      "maxAmountAnimalInCell": 30,
+      "maxAmountOfThisAnimal": 5
+    },
+    {
+      "animalClass": "Snake",
+      "maxAmountAnimalInCell": 30,
+      "maxAmountOfThisAnimal": 5
+    },
+    {
+      "animalClass": "Fox",
+      "maxAmountAnimalInCell": 30,
+      "maxAmountOfThisAnimal": 5
+    },
+    {
+      "animalClass": "Bear",
+      "maxAmountAnimalInCell": 5,
+      "maxAmountOfThisAnimal": 5
+    },
+    {
+      "animalClass": "Eagle",
+      "maxAmountAnimalInCell": 15,
+      "maxAmountOfThisAnimal": 5
+    }
+  ],
+
   "entityCharacteristics": [
     {
       "animalClass": "Wolf",

@@ -38,6 +38,15 @@ public class Main {
             e.printStackTrace();
         }
 
+"Horse": 10,
+    "Deer": 15,
+    "Rabbit": 60,
+    "Mouse": 80,
+    "Goat": 60,
+    "Sheep": 70,
+    "Boar":  15,
+    "Buffalo": 10,
+    "Duck": 40
 
  */
 

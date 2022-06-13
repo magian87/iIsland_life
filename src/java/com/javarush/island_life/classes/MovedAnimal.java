@@ -18,6 +18,7 @@ public class MovedAnimal {
 
     public void moveAnimal() {
         for (AnimalWithPosition value : island.landField2.values()) {
+
             String str = "Ходит: %s с клетки: %d\\%d на клетку: %d\\%d ;";
             String str2 = "Ходит: %s с клетки: %d\\%d дальше идти не куда, смена направления движения на %s ;";
             for (int i = 0; i < value.getAnimal().getEntityCharacteristics().getSpeed(); i++) {

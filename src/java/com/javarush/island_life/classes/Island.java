@@ -32,7 +32,7 @@ public class Island {
         try {
             //Settings Entity (Animal, Plant)
             EntitySettings entitySettings = objectMapper.readValue(
-                    Files.newBufferedReader(Path.of("settings//entitySettings.json")), EntitySettings.class);
+                    Files.newBufferedReader(Path.of("settings//entity.json")), EntitySettings.class);
             //Settings island
       /*      EntitySettingsIsland entitySettingsIsland = objectMapper.readValue(
                     Files.newBufferedReader(Path.of("files//settingsIsland.json")), EntitySettingsIsland.class);*/
