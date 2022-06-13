@@ -5,6 +5,26 @@ public class EntityIslandCharacteristics {
     private int maxAmountAnimalInCell;
     private  int maxAmountOfThisAnimal;
 
+    @Override
+    public String toString() {
+        return "EntityIslandCharacteristics{" +
+                "animalClass='" + animalClass + '\'' +
+                ", maxAmountAnimalInCell=" + maxAmountAnimalInCell +
+                ", maxAmountOfThisAnimal=" + maxAmountOfThisAnimal +
+                '}';
+    }
+
+    public String getAnimalClass() {
+        return animalClass;
+    }
+
+    public int getMaxAmountAnimalInCell() {
+        return maxAmountAnimalInCell;
+    }
+
+    public int getMaxAmountOfThisAnimal() {
+        return maxAmountOfThisAnimal;
+    }
 
     public void setAnimalClass(String animalClass) {
         this.animalClass = animalClass;

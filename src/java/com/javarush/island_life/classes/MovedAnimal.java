@@ -4,12 +4,20 @@ package com.javarush.island_life.classes;
 import com.javarush.island_life.classes.entity.Position;
 import com.javarush.island_life.classes.enums.DirectionMove;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class MovedAnimal {
     Island island;
     Position position;
+
+    private String STEP_INFO = "Ходит: %s с клетки: %d\\%d на клетку: %d\\%d ;";
+    private String STEP_INFO_CHANGE_DIRECTION_IN_WATHER =
+            "Ходит: %s с клетки: %d\\%d дальше идти не куда, смена направления движения на %s ;";
+    private String STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS =
+            "Ходит: %s с клетки: %d\\%d на следующей клетке превышено максимальное количество животных данного вида";
 
     public MovedAnimal(Island island) {
         this.island = island;
@@ -17,10 +25,13 @@ public class MovedAnimal {
 
 
     public void moveAnimal() {
+
         for (AnimalWithPosition value : island.landField2.values()) {
 
-            String str = "Ходит: %s с клетки: %d\\%d на клетку: %d\\%d ;";
-            String str2 = "Ходит: %s с клетки: %d\\%d дальше идти не куда, смена направления движения на %s ;";
+            String animalClass = value.getAnimal().getEntityCharacteristics().getAnimalClass();
+            int maxAmountAnimalInCell =
+            island.getEntityIslandCharacteristicsMap().get(animalClass).getMaxAmountAnimalInCell()-1;
+
             for (int i = 0; i < value.getAnimal().getEntityCharacteristics().getSpeed(); i++) {
 
 
@@ -35,7 +46,11 @@ public class MovedAnimal {
                     case BOTTOM -> x++;
                 }
 
-                if (x < 0 || y < 0 || x > island.getHeight() - 1 || y > island.getWidth() - 1) {
+                if (x < 0 || y < 0 || x > island.getHeight() - 1 || y > island.getWidth() - 1
+                        || island.getAmountAnimalInCell(Position.positionGetInstance(x,y),
+                        animalClass) > maxAmountAnimalInCell
+
+                ) {
                     Random random = new Random();
 
                     DirectionMove directionMoveCurrent = value.getAnimal().getDirectionMove();
@@ -43,15 +58,20 @@ public class MovedAnimal {
                     int xx = random.nextInt(DirectionMove.values().length);
                     value.getAnimal().setDirectionMove(DirectionMove.values()[xx]);
 
+                    //УБРАТЬ ЭТО ДУБЛИРОВАНИЕ КОДА!!!
+                    String str =
+                            island.getAmountAnimalInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell?
+                                    STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS:STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
 
-                    System.out.printf(str2, value.getAnimal().getEntityCharacteristics().getAnimalClass(),
+                    System.out.printf(str, value.getAnimal().getEntityCharacteristics().getAnimalClass(),
                             value.getPosition().getX(), value.getPosition().getY(),
                             DirectionMove.values()[xx].name()
                     );
 
                 } else {
+
                     Position position1 = Position.positionGetInstance(x, y);
-                    System.out.printf(str, value.getAnimal().getEntityCharacteristics().getAnimalClass(),
+                    System.out.printf(STEP_INFO, value.getAnimal().getEntityCharacteristics().getAnimalClass(),
                             value.getPosition().getX(), value.getPosition().getY(),
                             position1.getX(), position1.getY());
                     value.setPosition(position1);
@@ -61,5 +81,6 @@ public class MovedAnimal {
             System.out.println();
         }
     }
+
 }
 

@@ -2,6 +2,7 @@ package com.javarush.island_life.classes;
 
 
 import com.diogonunes.jcolor.Attribute;
+import com.javarush.island_life.classes.entity.Position;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -21,10 +22,13 @@ public class Main {
 
         island.viewEntityByIsland2();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 3; i++) {
             movedAnimal.moveAnimal();
             island.viewEntityByIsland2();
         }
+
+
+
     }
 }
 
@@ -48,6 +52,12 @@ public class Main {
     "Buffalo": 10,
     "Duck": 40
 
- */
+
+    /*
+         //jsonNode = objectMapper.readTree(Files.newBufferedReader(Path.of("settings//settingsIsland.json")));
+            //this.height = jsonNode.get("height").intValue();
+            //this.width = jsonNode.get("width").intValue();
+    * */
+
 
 
