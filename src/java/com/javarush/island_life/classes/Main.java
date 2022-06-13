@@ -2,11 +2,9 @@ package com.javarush.island_life.classes;
 
 
 import com.diogonunes.jcolor.Attribute;
+import com.javarush.island_life.classes.entity.Animal;
 import com.javarush.island_life.classes.entity.Position;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
@@ -15,22 +13,49 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println(colorize("Hello!!!", Attribute.YELLOW_TEXT(), Attribute.NONE()));
+
         Island island = new Island();
-        MovedAnimal movedAnimal = new MovedAnimal(island);
+        //MovedAnimal movedAnimal = new MovedAnimal(island);
 
         island.firstFillEntity();
 
-        island.viewEntityByIsland2();
+        island.viewEntityByIsland();
 
-        for (int i = 0; i < 3; i++) {
-            movedAnimal.moveAnimal();
-            island.viewEntityByIsland2();
+        List<Animal> animalList = new LinkedList<>();
+
+        for (int i = 0; i < island.getHeight() ; i++) {
+            for (int j = 0; j < island.getWidth() ; j++) {
+                List<Animal> ll = island.landField.get(Position.positionGetInstance(i,j));
+                if (ll.size()>0){
+                    animalList.add(ll.get(0));
+                }
+            }
+
+        }
+
+        for (int i = 0; i < animalList.size(); i++) {
+            animalList.get(i).step();
+            System.out.println();
         }
 
 
+/*        for (Position position : island.receivePositions()) {
+            List<Animal> animalList = island.landField.get(position);
+            //System.out.println(animalList);
+            for (Animal animal : animalList) {
+                animal.step();
+            }
+        }*/
+
+        island.viewEntityByIsland();
 
     }
+
+
+
 }
+
+
 
 /*Path path = Path.of("files//animalConfig1.properties");
 

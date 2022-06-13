@@ -1,7 +1,6 @@
 package com.javarush.island_life.classes;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javarush.island_life.classes.entity.Animal;
 import com.javarush.island_life.classes.entity.Position;
@@ -20,8 +19,11 @@ public class Island {
     private int height;
     private int width;
 
-    public Map<Position, List<Animal>> landField3 = new HashMap<>();
-    public Map<Integer, AnimalWithPosition> landField2 = new HashMap<>();
+
+    //public Map<Integer, AnimalWithPosition> landField2 = new HashMap<>();
+
+    public Map<Position, List<Animal>> landField = new HashMap<>();
+
 
     public Map<String, EntityIslandCharacteristics> getEntityIslandCharacteristicsMap() {
         return entityIslandCharacteristicsMap;
@@ -30,7 +32,8 @@ public class Island {
     private ObjectMapper objectMapper;
     private EntitySettings entitySettings;
     private EntityProducer entityProducer;
-    private JsonNode jsonNode;
+
+   //private JsonNode jsonNode;
 
     private Map<String, EntityIslandCharacteristics> entityIslandCharacteristicsMap
             = new HashMap<>();
@@ -38,6 +41,8 @@ public class Island {
     {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
+
+            //entitySettings = GetEntitySettings.receiveSettings();
 
             entitySettings = objectMapper.readValue(
                     Files.newBufferedReader(Path.of("settings//entity.json")), EntitySettings.class);
@@ -62,6 +67,8 @@ public class Island {
     public Island() {
         this.height = entitySettings.getIslandCharacteristics()[0].getHeight();
         this.width = entitySettings.getIslandCharacteristics()[0].getWidth();
+
+
     }
 
     public int getHeight() {
@@ -72,31 +79,33 @@ public class Island {
         return width;
     }
 
-    public Island(int height, int width) {
-        this.height = height;
-        this.width = width;
-    }
 
-    public int getAmountAnimalInCell(Position position, String animalClass) {
-        int amountAnimal = 0;
-        for (AnimalWithPosition value : landField2.values()) {
-            if (value.position == position
-                    && value.getAnimal().getEntityCharacteristics().getAnimalClass().equals(animalClass)) {
-                amountAnimal++;
-            }
-            //System.out.println(position + " " + animalClass + " количество: " + amountAnimal);
 
+    public long getAmountAnimalClassInCell(Position position, String animalClass) {
+
+     /*   List<Animal> animalList = landField.get(position);
+        //System.out.println(position);
+        int cnt = 0;
+        for (Animal animal : animalList) {
+            if (animal.getEntityCharacteristics().getAnimalClass().equals(animalClass))
+                cnt++;
         }
-        return amountAnimal;
+        return cnt;*/
+
+        return landField.get(position).stream()
+                    .filter(s-> s.getEntityCharacteristics().getAnimalClass().equals(animalClass))
+                    .count();
+
+
     }
 
     public void firstFillEntity() {
-        /*for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                //landField.put(Position.positionGetInstance(i,j), new LinkedList<>());
-                //landField3.put(Position.positionGetInstance(i,j), new LinkedList<>());
+        for (int i = 0; i < this.height ; i++) {
+            for (int j = 0; j < this.width ; j++) {
+                List<Animal> list = new LinkedList<>();
+                this.landField.put(Position.positionGetInstance(i,j), list);
             }
-        }*/
+        }
 
         for (String classAnimal : entityProducer.receiveEntity()) {
 
@@ -108,50 +117,37 @@ public class Island {
                 Random random = new Random();
                 int x;
                 int y;
-                //List<Animal> animalList;
-                //int cntTry=0;
-
                 do {
                     x = random.nextInt(this.height);
                     y = random.nextInt(this.width);
                     position1 = Position.positionGetInstance(x, y);
 
-                } while (getAmountAnimalInCell(position1, classAnimal) > maxAmountAnimalInCell);
-
+                } while (getAmountAnimalClassInCell(position1, classAnimal) > maxAmountAnimalInCell);
 
                 Animal animal = entityProducer.createEntity(classAnimal);
-                //animal.setPosition(position1);
-                AnimalWithPosition animalWithPosition = new AnimalWithPosition(animal, position1);
+                animal.setPosition(position1);
+                animal.setIsland(this);
+                //AnimalWithPosition animalWithPosition = new AnimalWithPosition(animal, position1);
 
-                this.landField2.put(animalWithPosition.hashCode(), animalWithPosition);
-                animal.setX(x);
-                animal.setY(y);
+                landField.get(position1).add(animal);
 
+                //List<Animal> listAnimal = landField.get(position1);
+                //listAnimal.add(animal);
+
+                //this.landField2.put(animalWithPosition.hashCode(), animalWithPosition);
             }
         }
     }
-        public void viewEntityByIsland2 () {
 
-            landField3.clear();
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    //landField.put(Position.positionGetInstance(i,j), new LinkedList<>());
-                    landField3.put(Position.positionGetInstance(i, j), new LinkedList<>());
-                }
-            }
+    public Set<Position> receivePositions(){
+        return landField.keySet();
+    }
 
-            //Преобразование  Map<Integer, AnimalWithPosition> to Map<Position, List <Animal>>
-            for (AnimalWithPosition value : landField2.values()) {
-                //AnimalWithPosition animal = value;
-                List<Animal> animalList = landField3.get(value.getPosition());
-                animalList.add(value.getAnimal());
-            }
-
+        public void viewEntityByIsland() {
             int max = 0;
-            for (Position position : landField3.keySet()) {
-                int size = landField3.get(position).size();
+            for (Position position : landField.keySet()) {
+                int size = landField.get(position).size();
                 max = Math.max(max, size);
-
             }
 
             System.out.println("---------------------------------");
@@ -160,7 +156,7 @@ public class Island {
                     Position position1 = Position.positionGetInstance(i, j);
                     int cntAnimal = 0;
                     StringBuilder stringBuilder = new StringBuilder();
-                    for (Animal animal : landField3.get(position1)) {
+                    for (Animal animal : landField.get(position1)) {
                         stringBuilder.append(animal.getEntityCharacteristics().getEmoji()).append(",");
                         cntAnimal++;
                     }
@@ -178,7 +174,4 @@ public class Island {
                 System.out.println();
             }
         }
-
-
     }
-

@@ -26,7 +26,7 @@ public class MovedAnimal {
 
     public void moveAnimal() {
 
-        for (AnimalWithPosition value : island.landField2.values()) {
+     /*   for (AnimalWithPosition value : island.landField2.values()) {
 
             String animalClass = value.getAnimal().getEntityCharacteristics().getAnimalClass();
             int maxAmountAnimalInCell =
@@ -47,7 +47,7 @@ public class MovedAnimal {
                 }
 
                 if (x < 0 || y < 0 || x > island.getHeight() - 1 || y > island.getWidth() - 1
-                        || island.getAmountAnimalInCell(Position.positionGetInstance(x,y),
+                        || island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),
                         animalClass) > maxAmountAnimalInCell
 
                 ) {
@@ -60,7 +60,7 @@ public class MovedAnimal {
 
                     //УБРАТЬ ЭТО ДУБЛИРОВАНИЕ КОДА!!!
                     String str =
-                            island.getAmountAnimalInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell?
+                            island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell?
                                     STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS:STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
 
                     System.out.printf(str, value.getAnimal().getEntityCharacteristics().getAnimalClass(),
@@ -69,7 +69,6 @@ public class MovedAnimal {
                     );
 
                 } else {
-
                     Position position1 = Position.positionGetInstance(x, y);
                     System.out.printf(STEP_INFO, value.getAnimal().getEntityCharacteristics().getAnimalClass(),
                             value.getPosition().getX(), value.getPosition().getY(),
@@ -79,7 +78,7 @@ public class MovedAnimal {
 
             }
             System.out.println();
-        }
+        }*/
     }
 
 }
