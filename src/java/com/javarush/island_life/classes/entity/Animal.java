@@ -7,7 +7,7 @@ import com.javarush.island_life.classes.settints.EntitySettings;
 
 import java.util.Random;
 
-public abstract class Animal extends Entity /*implements Cloneable*/ {
+public abstract class Animal extends Entity /* implements Cloneable*/ {
     public DirectionMove getDirectionMove() {
         return directionMove;
     }
