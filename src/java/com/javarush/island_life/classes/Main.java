@@ -48,51 +48,7 @@ public class Main {
             island.viewEntityByIsland();
             animalList.clear();
         }
-
-/*        for (Position position : island.receivePositions()) {
-            List<Animal> animalList = island.landField.get(position);
-            //System.out.println(animalList);
-            for (Animal animal : animalList) {
-                animal.step();
-            }
-        }*/
-
-
-
     }
-
-
-
 }
-
-
-
-/*Path path = Path.of("files//animalConfig1.properties");
-
-        Properties properties = new Properties();
-        try (FileReader fileReader = new FileReader(path.toAbsolutePath().toString())) {
-            properties.load(fileReader);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-"Horse": 10,
-    "Deer": 15,
-    "Rabbit": 60,
-    "Mouse": 80,
-    "Goat": 60,
-    "Sheep": 70,
-    "Boar":  15,
-    "Buffalo": 10,
-    "Duck": 40
-
-
-    /*
-         //jsonNode = objectMapper.readTree(Files.newBufferedReader(Path.of("settings//settingsIsland.json")));
-            //this.height = jsonNode.get("height").intValue();
-            //this.width = jsonNode.get("width").intValue();
-    * */
-
 
 
