@@ -3,6 +3,7 @@ package com.javarush.island_life.classes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javarush.island_life.classes.entity.Animal;
+import com.javarush.island_life.classes.entity.Entity;
 import com.javarush.island_life.classes.entity.Position;
 import com.javarush.island_life.classes.settints.EntityIslandCharacteristics;
 import com.javarush.island_life.classes.settints.EntityProducer;
@@ -22,7 +23,7 @@ public class Island {
 
     //public Map<Integer, AnimalWithPosition> landField2 = new HashMap<>();
 
-    public Map<Position, List<Animal>> landField = new HashMap<>();
+    public Map<Position, List<Entity>> landField = new HashMap<>();
 
 
     public Map<String, EntityIslandCharacteristics> getEntityIslandCharacteristicsMap() {
@@ -82,16 +83,6 @@ public class Island {
 
 
     public long getAmountAnimalClassInCell(Position position, String animalClass) {
-
-     /*   List<Animal> animalList = landField.get(position);
-        //System.out.println(position);
-        int cnt = 0;
-        for (Animal animal : animalList) {
-            if (animal.getEntityCharacteristics().getAnimalClass().equals(animalClass))
-                cnt++;
-        }
-        return cnt;*/
-
         return landField.get(position).stream()
                     .filter(s-> s.getEntityCharacteristics().getAnimalClass().equals(animalClass))
                     .count();
@@ -102,7 +93,7 @@ public class Island {
     public void firstFillEntity() {
         for (int i = 0; i < this.height ; i++) {
             for (int j = 0; j < this.width ; j++) {
-                List<Animal> list = new LinkedList<>();
+                List<Entity> list = new LinkedList<>();
                 this.landField.put(Position.positionGetInstance(i,j), list);
             }
         }
@@ -124,17 +115,11 @@ public class Island {
 
                 } while (getAmountAnimalClassInCell(position1, classAnimal) > maxAmountAnimalInCell);
 
-                Animal animal = entityProducer.createEntity(classAnimal);
-                animal.setPosition(position1);
-                animal.setIsland(this);
-                //AnimalWithPosition animalWithPosition = new AnimalWithPosition(animal, position1);
+                Entity entity = entityProducer.createEntity(classAnimal);
 
-                landField.get(position1).add(animal);
-
-                //List<Animal> listAnimal = landField.get(position1);
-                //listAnimal.add(animal);
-
-                //this.landField2.put(animalWithPosition.hashCode(), animalWithPosition);
+                entity.setPosition(position1);
+                entity.setIsland(this);
+                landField.get(position1).add(entity);
             }
         }
     }
@@ -156,8 +141,8 @@ public class Island {
                     Position position1 = Position.positionGetInstance(i, j);
                     int cntAnimal = 0;
                     StringBuilder stringBuilder = new StringBuilder();
-                    for (Animal animal : landField.get(position1)) {
-                        stringBuilder.append(animal.getEntityCharacteristics().getEmoji()).append(",");
+                    for (Entity entity : landField.get(position1)) {
+                        stringBuilder.append(entity.getEntityCharacteristics().getEmoji()).append(",");
                         cntAnimal++;
                     }
                     if (stringBuilder.isEmpty()) {

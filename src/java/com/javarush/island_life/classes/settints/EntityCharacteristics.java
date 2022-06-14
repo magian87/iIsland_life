@@ -7,17 +7,25 @@ public class EntityCharacteristics implements Cloneable {
     private double currentSaturation;
     private String emoji;
     private String animalClass;
+    private String className;
 
-    public EntityCharacteristics(double weight, int speed, double saturation, double currentSaturation, String emoji, String animalClass) {
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public EntityCharacteristics(double weight, int speed, double saturation, double currentSaturation, String emoji, String animalClass, String className) {
         this.weight = weight;
         this.speed = speed;
         this.saturation = saturation;
         this.currentSaturation = currentSaturation;
         this.emoji = emoji;
         this.animalClass = animalClass;
+        this.className = className;
     }
-
-
 
     public EntityCharacteristics() {
     }

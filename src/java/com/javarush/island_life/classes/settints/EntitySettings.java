@@ -5,6 +5,16 @@ public class EntitySettings {
     private EntityCharacteristics[] entityCharacteristics;
     private EntityIslandCharacteristics[] entityIslandCharacteristics;
 
+    public EatCharacteristics[] getEatCharacteristics() {
+        return eatCharacteristics;
+    }
+
+    public void setEatCharacteristics(EatCharacteristics[] eatCharacteristics) {
+        this.eatCharacteristics = eatCharacteristics;
+    }
+
+    private EatCharacteristics[] eatCharacteristics;
+
     public IslandCharacteristics[] getIslandCharacteristics() {
         return islandCharacteristics;
     }

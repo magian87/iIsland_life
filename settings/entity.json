@@ -8,8 +8,33 @@
     }
   ],
 
+  "eatCharacteristics": [
+    {
+      "predator": "Wolf",
+      "wolf" : 0,
+      "snake": 0,
+      "fox": 0,
+      "bear": 0,
+      "eagle": 0,
+      "horse": 0,
+      "deer": 15,
+      "rabbit": 60,
+      "mouse": 80,
+      "goat": 60,
+      "sheep": 70,
+      "buffalo": 10,
+      "duck": 40,
+      "caterpillar": 0,
+      "plant": 0
+    }
+  ],
 
   "entityIslandCharacteristics": [
+    {
+      "animalClass": "Plant",
+      "maxAmountAnimalInCell": 5,
+      "maxAmountOfThisAnimal": 0
+    },
     {
       "animalClass": "Wolf",
       "maxAmountAnimalInCell": 30,
@@ -18,7 +43,7 @@
     {
       "animalClass": "Snake",
       "maxAmountAnimalInCell": 3,
-      "maxAmountOfThisAnimal": 3
+      "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Fox",
@@ -33,50 +58,205 @@
     {
       "animalClass": "Eagle",
       "maxAmountAnimalInCell": 15,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Horse",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Deer",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Rabbit",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Mouse",
+      "maxAmountAnimalInCell": 10,
       "maxAmountOfThisAnimal": 1
+    },
+    {
+      "animalClass": "Goat",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Sheep",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Boar",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Buffalo",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 1
+    },
+    {
+      "animalClass": "Duck",
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 0
+    },
+    {
+      "animalClass": "Caterpillar",
+      "maxAmountAnimalInCell": 15,
+      "maxAmountOfThisAnimal": 0
     }
   ],
 
   "entityCharacteristics": [
     {
+      "animalClass": "Plant",
+      "weight":200,
+      "speed":0,
+      "saturation":0,
+      "currentSaturation": 0,
+      "emoji":"\uD83C\uDF31",
+      "className": "plant"
+    },
+    {
       "animalClass": "Wolf",
       "weight":50.0,
       "speed":3,
-      "saturation":8,
-      "currentSaturation": 8,
-      "emoji":"\uD83D\uDC3A"
-    },
-    {
-      "animalClass": "Eagle",
-      "weight":6.0,
-      "speed":3,
-      "saturation":1,
-      "currentSaturation": 1,
-      "emoji":"\uD83E\uDD85"
+      "saturation":8.0,
+      "currentSaturation": 8.0,
+      "emoji":"\uD83D\uDC3A",
+      "className": "predator_animal"
     },
     {
       "animalClass": "Snake",
       "weight":15.0,
       "speed":1,
-      "saturation":3,
-      "currentSaturation": 3,
-      "emoji":"\uD83D\uDC0D"
+      "saturation":3.0,
+      "currentSaturation": 3.0,
+      "emoji":"\uD83D\uDC0D",
+      "className": "predator_animal"
     },
     {
       "animalClass": "Fox",
       "weight":8.0,
       "speed":2,
-      "saturation":2,
-      "currentSaturation": 8,
-      "emoji":"\uD83E\uDD8A"
+      "saturation":2.0,
+      "currentSaturation": 2.0,
+      "emoji":"\uD83E\uDD8A",
+      "className": "predator_animal"
     },
     {
       "animalClass": "Bear",
       "weight":500.0,
       "speed":2,
-      "saturation":80,
-      "currentSaturation": 8,
-      "emoji":"\uD83D\uDC3B"
+      "saturation":80.0,
+      "currentSaturation": 80.0,
+      "emoji":"\uD83D\uDC3B",
+      "className": "predator_animal"
+    },
+    {
+      "animalClass": "Eagle",
+      "weight":6.0,
+      "speed":3,
+      "saturation":1.0,
+      "currentSaturation": 1.0,
+      "emoji":"\uD83E\uDD85",
+      "className": "predator_animal"
+    },
+
+    {
+      "animalClass": "Horse",
+      "weight":400.0,
+      "speed":4,
+      "saturation":60.0,
+      "currentSaturation":60.0,
+      "emoji":"\uD83D\uDC34",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Deer",
+      "weight":300.0,
+      "speed":4,
+      "saturation": 50.0,
+      "currentSaturation":50.0 ,
+      "emoji": "\uD83E\uDD8C",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Rabbit",
+      "weight":2.0,
+      "speed":2,
+      "saturation": 0.45,
+      "currentSaturation":0.4 ,
+      "emoji":"\uD83D\uDC34",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Mouse",
+      "weight":0.05,
+      "speed":1,
+      "saturation": 0.01,
+      "currentSaturation":0.01,
+      "emoji":"\uD83D\uDC2D",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Goat",
+      "weight":60.0,
+      "speed":3,
+      "saturation": 10.0,
+      "currentSaturation": 10.0 ,
+      "emoji":"\uD83D\uDC10",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Sheep",
+      "weight":70.0,
+      "speed":3,
+      "saturation": 15.0,
+      "currentSaturation":15.0,
+      "emoji":"\uD83D\uDC11",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Boar",
+      "weight":400.0,
+      "speed":2,
+      "saturation": 50.0,
+      "currentSaturation":50.0,
+      "emoji":"\uD83D\uDC17",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Buffalo",
+      "weight":700.0,
+      "speed":3,
+      "saturation": 100.0,
+      "currentSaturation":100.0,
+      "emoji":"\uD83D\uDC03",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Duck",
+      "weight":1.0,
+      "speed":4,
+      "saturation": 0.15,
+      "currentSaturation":0.15,
+      "emoji":"\uD83E\uDD86",
+      "className": "herbivore_animal"
+    },
+    {
+      "animalClass": "Caterpillar",
+      "weight":0.01,
+      "speed":1,
+      "saturation": 0.01,
+      "currentSaturation":0.01,
+      "emoji":"\uD83D\uDC1B",
+      "className": "herbivore_animal"
     }
   ]
 }

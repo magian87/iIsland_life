@@ -12,12 +12,16 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
         return directionMove;
     }
 
-    private Position position;
-
-    private String STEP_INFO = "Ходит: %s с клетки: %d\\%d на клетку: %d\\%d ;";
-    private String STEP_INFO_CHANGE_DIRECTION_IN_WATHER =
+    private final String STEP_INFO = "Ходит: %s с клетки: %d\\%d на клетку: %d\\%d  ;";
+    private final String STEP_INFO_CHANGE_DIRECTION_IN_WATHER =
             "Ходит: %s с клетки: %d\\%d дальше идти не куда, смена направления движения на %s ;";
-    private String STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS =
+
+    public Animal(EntityCharacteristics entityCharacteristics) {
+        super(entityCharacteristics);
+        this.directionMove = DirectionMove.RIGHT;
+    }
+
+    private final String STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS =
             "Ходит: %s с клетки: %d\\%d на следующей клетке превышено максимальное количество животных данного вида";
 
     public Island getIsland() {
@@ -31,38 +35,21 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
     private Island island;
 
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
     public void setDirectionMove(DirectionMove directionMove) {
         this.directionMove = directionMove;
     }
 
     private DirectionMove directionMove;
 
-    private EntityCharacteristics entityCharacteristics;
 
-    public Animal(EntityCharacteristics entityCharacteristics) {
-        this.directionMove = DirectionMove.RIGHT;
-        this.entityCharacteristics = entityCharacteristics;
-    }
 
-    public EntityCharacteristics getEntityCharacteristics() {
-        return entityCharacteristics;
-    }
 
     public void step() {
-
         for (int i = 0; i < this.getEntityCharacteristics().getSpeed(); i++) {
 
 
-            int x = this.position.getX();
-            int y = this.position.getY();
+            int x = this.getPosition().getX();
+            int y = this.getPosition().getY();
 
             switch (directionMove) {
                 case RIGHT -> y++;
@@ -74,12 +61,12 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
             //А вот так делать правильно? Как получить границы острова?
             //Можно было конечно остров в Position передавать
             //EntitySettings entitySettings = GetEntitySettings.receiveSettings();
-            String animalClass = this.entityCharacteristics.getAnimalClass();
+            String animalClass = this.getEntityCharacteristics().getAnimalClass();
             int maxAmountAnimalInCell =
                     island.getEntityIslandCharacteristicsMap().get(animalClass).getMaxAmountAnimalInCell() - 1;
 
             if (x < 0 || y < 0 || x > island.getHeight() - 1 || y > island.getWidth() - 1
-                //|| island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell
+                || island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell
 
             ) {
 
@@ -106,11 +93,8 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                         this.getPosition().getX(), this.getPosition().getY(),
                         position1.getX(), position1.getY());
 
-                //this.setPosition(position1);
-                //island.landField.get(this.getPosition()).add(this);
-
-                island.landField.get(this.getPosition()).remove(this);
-                this.position = position1;
+                System.out.println(island.landField.get(this.getPosition()).remove(this));
+                this.setPosition(position1);
 
                 island.landField.get(position1).add(this);
 
@@ -118,6 +102,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
             }
 
         }
+        System.out.println("");
     }
 
     public void eat() {
@@ -135,7 +120,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
     @Override
     public String toString() {
-        return entityCharacteristics.getEmoji();
+        return this.getEntityCharacteristics().getEmoji();
 
 /*        return "Animal{" +
                 "weight=" + weight +
