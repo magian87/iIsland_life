@@ -18,37 +18,48 @@ public class Main {
         System.out.println(colorize("Hello!!!", Attribute.YELLOW_TEXT(), Attribute.NONE()));
 
         Island island = new Island();
-        //MovedAnimal movedAnimal = new MovedAnimal(island);
-
         island.firstFillEntity();
 
         island.viewEntityByIsland();
 
-        List<Entity> animalList = new LinkedList<>();
-
-
         for (int k = 0; k < 5; k++) {
-
-
-            for (int i = 0; i < island.getHeight(); i++) {
-                for (int j = 0; j < island.getWidth(); j++) {
-                    List<Entity> ll = island.landField.get(Position.positionGetInstance(i, j));
-                    if (ll.size() > 0) {
-                        animalList.add(ll.get(0));
-                    }
-                }
-
-            }
-
-            for (Entity entity : animalList) {
-                if (entity instanceof Animal) {
-                    ((Animal) entity).step();
-                }
-            }
+            island.nextStep();
+            //island.reUpdateIsland();
             island.viewEntityByIsland();
-            animalList.clear();
+            }
+
+
         }
-    }
 }
+
+
+
+/*Path path = Path.of("files//animalConfig1.properties");
+
+        Properties properties = new Properties();
+        try (FileReader fileReader = new FileReader(path.toAbsolutePath().toString())) {
+            properties.load(fileReader);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+"Horse": 10,
+    "Deer": 15,
+    "Rabbit": 60,
+    "Mouse": 80,
+    "Goat": 60,
+    "Sheep": 70,
+    "Boar":  15,
+    "Buffalo": 10,
+    "Duck": 40
+
+
+    /*
+         //jsonNode = objectMapper.readTree(Files.newBufferedReader(Path.of("settings//settingsIsland.json")));
+            //this.height = jsonNode.get("height").intValue();
+            //this.width = jsonNode.get("width").intValue();
+    * */
+
 
 

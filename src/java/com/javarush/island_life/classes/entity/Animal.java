@@ -7,22 +7,19 @@ import com.javarush.island_life.classes.settints.EntitySettings;
 
 import java.util.Random;
 
+import static com.javarush.island_life.classes.ConstantIsland.*;
+
 public abstract class Animal extends Entity /*implements Cloneable*/ {
     public DirectionMove getDirectionMove() {
         return directionMove;
     }
-
-    private final String STEP_INFO = "Ходит: %s с клетки: %d\\%d на клетку: %d\\%d  ;";
-    private final String STEP_INFO_CHANGE_DIRECTION_IN_WATHER =
-            "Ходит: %s с клетки: %d\\%d дальше идти не куда, смена направления движения на %s ;";
 
     public Animal(EntityCharacteristics entityCharacteristics) {
         super(entityCharacteristics);
         this.directionMove = DirectionMove.RIGHT;
     }
 
-    private final String STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS =
-            "Ходит: %s с клетки: %d\\%d на следующей клетке превышено максимальное количество животных данного вида";
+
 
     public Island getIsland() {
         return island;
@@ -33,7 +30,6 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
     }
 
     private Island island;
-
 
     public void setDirectionMove(DirectionMove directionMove) {
         this.directionMove = directionMove;
@@ -59,8 +55,6 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
             }
 
             //А вот так делать правильно? Как получить границы острова?
-            //Можно было конечно остров в Position передавать
-            //EntitySettings entitySettings = GetEntitySettings.receiveSettings();
             String animalClass = this.getEntityCharacteristics().getAnimalClass();
             int maxAmountAnimalInCell =
                     island.getEntityIslandCharacteristicsMap().get(animalClass).getMaxAmountAnimalInCell() - 1;
@@ -71,20 +65,24 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
             ) {
 
                 Random random = new Random();
+                int xx;
+                do {
+                    xx = random.nextInt(DirectionMove.values().length);
 
-                int xx = random.nextInt(DirectionMove.values().length);
+                } while (DirectionMove.values()[xx]==this.directionMove);
+
                 this.directionMove = DirectionMove.values()[xx];
 
-
                 //УБРАТЬ ЭТО ДУБЛИРОВАНИЕ КОДА!!!
-                String str = STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
+                //String str = STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
                 //island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell?
                 //      STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS:STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
 
-                System.out.printf(str, animalClass,
+                System.out.printf(STEP_INFO_CHANGE_DIRECTION_IN_WATHER, animalClass,
                         this.getPosition().getX(), this.getPosition().getY(),
                         DirectionMove.values()[xx].name()
                 );
+                //Логгер должен быть отдельно, как его перенести в другое место, если здесь происходит перемещение животного?
 
             } else {
                 Position position1 = Position.positionGetInstance(x, y);
@@ -93,16 +91,20 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                         this.getPosition().getX(), this.getPosition().getY(),
                         position1.getX(), position1.getY());
 
-                System.out.println(island.landField.get(this.getPosition()).remove(this));
+                //А так вообще нормально, геттером записывать. обсуждали. Уберу отсюда island.getLandField
+                //см. island.reUpdateIsland(), буду задавать позицию животного, и в соответсвии с этой позицией
+                //приводить остров к актуальному состоянию
+                //но после того, как остальное будет сделано, т.к. времени уже мало...
+                System.out.println(island.getLandField().get(this.getPosition()).remove(this));
                 this.setPosition(position1);
 
-                island.landField.get(position1).add(this);
+                island.getLandField().get(position1).add(this);
 
 
             }
 
         }
-        System.out.println("");
+        System.out.println();
     }
 
     public void eat() {

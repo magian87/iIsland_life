@@ -167,4 +167,26 @@ public class EatCharacteristics {
     public void setPlant(int plant) {
         this.plant = plant;
     }
+
+    @Override
+    public String toString() {
+        return "EatCharacteristics{" +
+                "predator='" + predator + '\'' +
+                ", wolf=" + wolf +
+                ", snake=" + snake +
+                ", fox=" + fox +
+                ", bear=" + bear +
+                ", eagle=" + eagle +
+                ", horse=" + horse +
+                ", deer=" + deer +
+                ", rabbit=" + rabbit +
+                ", mouse=" + mouse +
+                ", goat=" + goat +
+                ", sheep=" + sheep +
+                ", buffalo=" + buffalo +
+                ", duck=" + duck +
+                ", caterpillar=" + caterpillar +
+                ", plant=" + plant +
+                '}';
+    }
 }
