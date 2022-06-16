@@ -24,9 +24,10 @@ public class Main {
 
 
         //for (int k = 0; k < 33; k++)
-        int k=0;
-        while (k<100?true:false)
+        int k=1;
+        while (k<=100?true:false)
         {
+            System.out.println(colorize("Шаг "+ k, Attribute.GREEN_TEXT(), Attribute.NONE()));
             island.nextStep();
             //island.reUpdateIsland();
             island.viewEntityByIsland();
