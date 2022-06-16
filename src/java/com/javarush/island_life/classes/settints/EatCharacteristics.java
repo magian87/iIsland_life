@@ -13,31 +13,19 @@ public class EatCharacteristics {
     private int mouse;
     private int goat;
     private int sheep;
+    private int boar;
     private int buffalo;
     private int duck;
     private int caterpillar;
     private int plant;
 
-    public EatCharacteristics(String predator, int wolf, int snake, int fox, int bear, int eagle, int horse, int deer, int rabbit, int mouse, int goat, int sheep, int buffalo, int duck, int caterpillar, int plant) {
-        this.predator = predator;
-        this.wolf = wolf;
-        this.snake = snake;
-        this.fox = fox;
-        this.bear = bear;
-        this.eagle = eagle;
-        this.horse = horse;
-        this.deer = deer;
-        this.rabbit = rabbit;
-        this.mouse = mouse;
-        this.goat = goat;
-        this.sheep = sheep;
-        this.buffalo = buffalo;
-        this.duck = duck;
-        this.caterpillar = caterpillar;
-        this.plant = plant;
+
+    public int getBoar() {
+        return boar;
     }
 
-    public EatCharacteristics() {
+    public void setBoar(int boar) {
+        this.boar = boar;
     }
 
     public String getPredator() {

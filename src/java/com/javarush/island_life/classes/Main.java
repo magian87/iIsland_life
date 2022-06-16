@@ -15,17 +15,26 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println();
-        System.out.println(colorize("Hello!!!", Attribute.YELLOW_TEXT(), Attribute.NONE()));
+        System.out.println(colorize("Добро пожаловать на жизнь на острове!!!", Attribute.YELLOW_TEXT(), Attribute.NONE()));
 
         Island island = new Island();
         island.firstFillEntity();
 
         island.viewEntityByIsland();
 
-        for (int k = 0; k < 5; k++) {
+
+        //for (int k = 0; k < 33; k++)
+        int k=0;
+        while (k<100?true:false)
+        {
             island.nextStep();
             //island.reUpdateIsland();
             island.viewEntityByIsland();
+            List<Animal> animalList = island.receiveAnimal();
+            if (animalList.size()==0) {
+                return;
+            }
+            k++;
             }
 
 

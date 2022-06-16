@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javarush.island_life.classes.entity.Animal;
 import com.javarush.island_life.classes.entity.Entity;
 import com.javarush.island_life.classes.entity.Position;
+import com.javarush.island_life.classes.settints.EatCharacteristics;
 import com.javarush.island_life.classes.settints.EntityIslandCharacteristics;
 import com.javarush.island_life.classes.settints.EntityProducer;
 import com.javarush.island_life.classes.settints.EntitySettings;
@@ -17,11 +18,11 @@ import java.util.stream.Collectors;
 
 public class Island {
 
-    private int height;
-    private int width;
+    private final int height;
+    private final int width;
     private ObjectMapper objectMapper;
-    private EntitySettings entitySettings;
-    private EntityProducer entityProducer;
+    private final EntitySettings entitySettings;
+    private final EntityProducer entityProducer;
 
 
     //Так делать нельзя, постараюсь исправить, комментарий как буду исправлять в readme.md
@@ -37,7 +38,7 @@ public class Island {
         return entityIslandCharacteristicsMap;
     }
 
-
+    Map<String, Map<String, Integer>> probabilityKillMap = new HashMap<>();
 
     //private JsonNode jsonNode;
 
@@ -51,12 +52,35 @@ public class Island {
             entitySettings = objectMapper.readValue(
                     Files.newBufferedReader(Path.of("settings//entity.json")), EntitySettings.class);
 
+
+            for (EatCharacteristics eatCharacteristic : entitySettings.getEatCharacteristics()) {
+                Map<String, Integer> eatMap = new HashMap<>();
+                eatMap.put("Wolf", eatCharacteristic.getWolf());
+                eatMap.put("Snake", eatCharacteristic.getSnake());
+                eatMap.put("Fox", eatCharacteristic.getFox());
+                eatMap.put("Bear", eatCharacteristic.getBear());
+                eatMap.put("Eagle", eatCharacteristic.getEagle());
+                eatMap.put("Horse", eatCharacteristic.getHorse());
+                eatMap.put("Deer", eatCharacteristic.getDeer());
+                eatMap.put("Rabbit", eatCharacteristic.getRabbit());
+                eatMap.put("Mouse", eatCharacteristic.getMouse());
+                eatMap.put("Goat", eatCharacteristic.getGoat());
+                eatMap.put("Sheep", eatCharacteristic.getSheep());
+                eatMap.put("Boar", eatCharacteristic.getBoar());
+                eatMap.put("Buffalo", eatCharacteristic.getBuffalo());
+                eatMap.put("Duck", eatCharacteristic.getDuck());
+                eatMap.put("Caterpillar", eatCharacteristic.getCaterpillar()  );
+                eatMap.put("Plant", eatCharacteristic.getPlant());
+
+                probabilityKillMap.put(eatCharacteristic.getPredator(), eatMap);
+            }
+            //System.out.println(probabilityKillMap);
+
             entityIslandCharacteristicsMap =
                     Arrays.stream(entitySettings.getEntityIslandCharacteristics())
                             .collect(Collectors.toMap(
                                     EntityIslandCharacteristics::getAnimalClass,
                                     s -> s));
-
 
             entityProducer = new EntityProducer(entitySettings.getEntityCharacteristics());
 
@@ -160,7 +184,7 @@ public class Island {
         }
     }
 
-    private List<Animal> receiveAnimal() {
+    public List<Animal> receiveAnimal() {
         List<Animal> animalList = new LinkedList<>();
 
         for (int i = 0; i < getHeight(); i++) {
@@ -178,8 +202,8 @@ public class Island {
     public void nextStep() {
         List<Animal> animalList = receiveAnimal();
         //Ход животных, что бы несколько раз не сходить одним и тем же животным
-        for (int i = 0; i < animalList.size(); i++) {
-            animalList.get(i).step();
+        for (Animal animal : animalList) {
+            animal.step();
         }
     }
 
