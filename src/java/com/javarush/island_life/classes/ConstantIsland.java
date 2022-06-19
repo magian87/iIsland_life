@@ -8,4 +8,5 @@ public class ConstantIsland
 
     public static double REDUCTION_SATURATION = 0.33;
     public static int DAYS_HUNGRY_DEAD = 4;
+    public static int AMOUNT_WITHOUT_REPRODUCTION = 3;
 }

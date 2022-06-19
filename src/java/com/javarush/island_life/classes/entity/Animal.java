@@ -130,6 +130,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                     //но после того, как остальное будет сделано, т.к. времени уже мало...
                     this.setPosition(position1);
                     this.eat();
+                    this.reproduction();
 
                 }
             }
@@ -216,8 +217,13 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                         Entity entity1 = island.getEntityProducer().createEntity(this.getEntityCharacteristics().getAnimalClass());
                         entity1.setPosition(this.getPosition());
                         entity1.setIsland(this.island);
+                        island.getNatureIslandList().add(entity1);
 
+                        System.out.println(colorize("Родилось новое животно: " +
+                                entity1.getEntityCharacteristics().getAnimalClass(), Attribute.BRIGHT_MAGENTA_TEXT() , Attribute.NONE()));
                     }
+                    this.amountParented = this.amountParented + springOff;
+                    this.amountStepWithoutParent = AMOUNT_WITHOUT_REPRODUCTION;
 
                 }
 

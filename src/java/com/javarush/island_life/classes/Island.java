@@ -110,10 +110,13 @@ public class Island {
         return width;
     }
 
-
+    public List<Entity> getNatureIslandList() {
+        return natureIslandList;
+    }
 
     public long receiveAmountAnimalClassInCell(Position position, String animalClass) {
          return natureIslandList.stream()
+                 .filter(s->s.getPosition().equals(position))
                  .filter(s-> s.getEntityCharacteristics().getAnimalClass().equals(animalClass))
                  .count();
     }

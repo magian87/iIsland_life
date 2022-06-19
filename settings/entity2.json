@@ -303,8 +303,8 @@
     },
     {
       "animalClass": "Wolf",
-      "maxAmountAnimalInCell": 30,
-      "maxAmountOfThisAnimal": 0
+      "maxAmountAnimalInCell": 10,
+      "maxAmountOfThisAnimal": 10
     },
     {
       "animalClass": "Snake",
@@ -369,7 +369,7 @@
     {
       "animalClass": "Duck",
       "maxAmountAnimalInCell": 10,
-      "maxAmountOfThisAnimal": 3
+      "maxAmountOfThisAnimal": 5
     },
     {
       "animalClass": "Caterpillar",
