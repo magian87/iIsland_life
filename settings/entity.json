@@ -39,7 +39,7 @@
     {
       "animalClass": "Wolf",
       "maxAmountAnimalInCell": 30,
-      "maxAmountOfThisAnimal": 1
+      "maxAmountOfThisAnimal": 5
     },
     {
       "animalClass": "Snake",
@@ -200,7 +200,7 @@
       "animalClass": "Mouse",
       "weight":0.05,
       "speed":1,
-      "saturation": 0.01,
+      "saturation": 10.01,
       "currentSaturation":0.01,
       "emoji":"\uD83D\uDC2D",
       "className": "herbivore_animal"

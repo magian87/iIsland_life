@@ -1,28 +1,35 @@
 package com.javarush.island_life.classes.entity;
 
+import com.diogonunes.jcolor.Attribute;
 import com.javarush.island_life.classes.Island;
+import com.javarush.island_life.classes.entity.plant.Plant;
 import com.javarush.island_life.classes.enums.DirectionMove;
 import com.javarush.island_life.classes.settints.EntityCharacteristics;
-import com.javarush.island_life.classes.settints.EntitySettings;
+import com.javarush.island_life.classes.settints.EntityProducer;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import static com.diogonunes.jcolor.Ansi.colorize;
 import static com.javarush.island_life.classes.ConstantIsland.*;
 
 public abstract class Animal extends Entity /*implements Cloneable*/ {
     public DirectionMove getDirectionMove() {
         return directionMove;
     }
-
     private int amountStepWithoutSaturation;
-    private boolean isDead;
+    private int amountParented;
+    private int amountStepWithoutParent;
 
     public Animal(EntityCharacteristics entityCharacteristics) {
         super(entityCharacteristics);
+        this.setIsAlive(true);
         this.directionMove = DirectionMove.RIGHT;
         //Это нормально так описывать свойства, одни из настроек, другие для служебного пользования класса...????
         this.amountStepWithoutSaturation = 0;
-        this.isDead = false;
+        this.amountParented = 0;
+        this.amountStepWithoutParent = 0;
     }
 
 
@@ -45,42 +52,45 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
     public void step() {
         for (int i = 0; i < this.getEntityCharacteristics().getSpeed(); i++) {
-
-
-            int x = this.getPosition().getX();
-            int y = this.getPosition().getY();
-
-            switch (directionMove) {
-                case RIGHT -> y++;
-                case LEFT -> y--;
-                case TOP -> x--;
-                case BOTTOM -> x++;
-            }
-
-            //А вот так делать правильно? Как получить границы острова?
-            String animalClass = this.getEntityCharacteristics().getAnimalClass();
-            int maxAmountAnimalInCell =
-                    island.getEntityIslandCharacteristicsMap().get(animalClass).getMaxAmountAnimalInCell() - 1;
-
-            double currentSaturation = this.getEntityCharacteristics().getCurrentSaturation();
-            if (currentSaturation > 0) {
-                double reductionSaturation = Math.ceil(this.getEntityCharacteristics().getSaturation() * REDUCTION_SATURATION / this.getEntityCharacteristics().getSpeed());
-                this.getEntityCharacteristics().setCurrentSaturation(Math.max(currentSaturation - reductionSaturation, 0));
-            }
-            if (currentSaturation == 0) {
-                this.amountStepWithoutSaturation++;
-            }
-
-            if (this.amountStepWithoutSaturation > DAYS_HUNGRY_DEAD-1) {
-                this.isDead = true;
-            }
-
-            if (!this.isDead) {
+            if (this.isAlive()) {
                 this.eat();
 
+                int x = this.getPosition().getX();
+                int y = this.getPosition().getY();
 
+                switch (directionMove) {
+                    case RIGHT -> y++;
+                    case LEFT -> y--;
+                    case TOP -> x--;
+                    case BOTTOM -> x++;
+                }
+
+                //А вот так делать правильно? Как получить границы острова?
+                String animalClass = this.getEntityCharacteristics().getAnimalClass();
+                int maxAmountAnimalInCell =
+                        island.getEntityIslandCharacteristicsMap().get(animalClass).getMaxAmountAnimalInCell() - 1;
+
+                double currentSaturation = this.getEntityCharacteristics().getCurrentSaturation();
+                if (currentSaturation > 0) {
+                    double reductionSaturation = (this.getEntityCharacteristics().getSaturation() * REDUCTION_SATURATION / this.getEntityCharacteristics().getSpeed());
+                    this.getEntityCharacteristics().setCurrentSaturation(Math.max(currentSaturation - reductionSaturation, 0));
+                }
+                if (currentSaturation == 0) {
+                    this.amountStepWithoutSaturation++;
+                }
+
+                if (this.amountStepWithoutSaturation > DAYS_HUNGRY_DEAD - 1) {
+                    this.setIsAlive(false);
+                    System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + this.getPosition() + " умер от голода ;"
+                            , Attribute.BRIGHT_CYAN_TEXT(), Attribute.NONE()));
+                    return; //Надо ли убирать и по другому выстраивать логику?
+
+                }
+
+
+                //
                 if (x < 0 || y < 0 || x > island.getHeight() - 1 || y > island.getWidth() - 1
-                        || island.getAmountAnimalClassInCell(Position.positionGetInstance(x, y), animalClass) > maxAmountAnimalInCell
+                        || island.receiveAmountAnimalClassInCell(Position.positionGetInstance(x, y), animalClass) > maxAmountAnimalInCell
 
                 ) {
 
@@ -113,33 +123,112 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                             position1.getX(), position1.getY(),
                             this.getEntityCharacteristics().getCurrentSaturation());
 
+
                     //А так вообще нормально, геттером записывать. обсуждали. Уберу отсюда island.getLandField
                     //см. island.reUpdateIsland(), буду задавать позицию животного, и в соответсвии с этой позицией
                     //приводить остров к актуальному состоянию
                     //но после того, как остальное будет сделано, т.к. времени уже мало...
-                    System.out.println(island.getLandField().get(this.getPosition()).remove(this));
                     this.setPosition(position1);
-
-                    island.getLandField().get(position1).add(this);
-
+                    this.eat();
 
                 }
-            } else {
-                    System.out.print(this.getEntityCharacteristics().getAnimalClass() + " умер от голода " );
-                    System.out.println(island.getLandField().get(this.getPosition()).remove(this));
-                    return; //Надо ли убирать и по другому выстраивать логику?
-
             }
         }
-        //System.out.println();
     }
 
     public void eat() {
+        //1. Проверить если насыщение меньше максимума то продолжать
+        if (this.getEntityCharacteristics().getCurrentSaturation() < this.getEntityCharacteristics().getSaturation()) {
+            //2. Получить список животных\растений на той же клетке (Убрать животных того же вида желательно,
+            // т.к. сейчас нет прецедентов)
+            List<Entity> entityList = island.receiveEntitiesByPosition(this.getPosition());
+            //3. Получить мэп вероятности поедания для хищника или травоядного или и того и того
+            Map<String, Map<String, Integer>> probabilityKillMap = island.receiveProbabilityKillMap();
+            //4. Цикл по  найденному списку
+            for (Entity entity : entityList) {
+                //5. Если насыщение=максимальное насыщение выйти из процедуры, иначе съесть других животных
+                if (this.getEntityCharacteristics().getCurrentSaturation() == this.getEntityCharacteristics().getSaturation()) {
+                    return;
+                }
+                //6. Животное может есть данную сущность (животное, растение), кинуть вероятность полученную из мапы
 
+                String curAnimalClass;
+                double curWeight;
+                if (entity instanceof Animal animal) {
+                    curAnimalClass = animal.getEntityCharacteristics().getAnimalClass();
+                    curWeight = animal.getEntityCharacteristics().getWeight();
+                } else if (entity instanceof Plant plant) {
+                    curAnimalClass = plant.getEntityCharacteristics().getAnimalClass();
+                    curWeight = plant.getEntityCharacteristics().getWeight();
+                } else {
+                    throw new RuntimeException("Объект неизвестного типа");
+                }
 
+                int probability = probabilityKillMap
+                        .get(this.getEntityCharacteristics().getAnimalClass()).get(curAnimalClass);
+
+                if (entity.isAlive()) {
+                    if (probability > 0) {
+                        Random random = new Random();
+                        int probability1 = random.nextInt(probability);
+                        //   Если вероятность от 0 до вероятности из списка, то насытить животное
+                        //   math.min(текущее насыщение + вес животного, максимальное насыщение)
+                        if (0 <= probability1 && probability1 <= probability) {
+                            this.getEntityCharacteristics()
+                                    .setCurrentSaturation(
+                                            Math.min(this.getEntityCharacteristics().getCurrentSaturation() + curWeight,
+                                                    this.getEntityCharacteristics().getSaturation()));
+                            System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + " съел " + curAnimalClass + "  текущее насыщение: " + this.getEntityCharacteristics().getCurrentSaturation(), Attribute.BLUE_TEXT(), Attribute.NONE()));
+                            //6. Пометить животное как убитое, удалить из списка
+                            entity.setIsAlive(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private double receiveSaturationByAnimal(Animal animal) {
+        return animal.getEntityCharacteristics().getCurrentSaturation();
     }
 
     public void reproduction() {
+        //Животное может размножиться только под конец хода
+        //Животное может размножиться если насыщение у обоих животных равно 0
+        //Количество размножений за игру указывается в настройках - доработать
+
+        //1. Проверить если насыщение больше 0
+        if (receiveSaturationByAnimal(this)>0){
+            //2. Проверить есть ли другие животные такого же типа на этой клетке с насыщением больше 0
+            Entity entity = island.receivePairForReproduction(this);
+            if (entity != null){
+                Random random = new Random();
+                //3. Получить кол-во детенышей по рэндому от кол-во возможного приплода
+                int springOff = random.nextInt(this.getEntityCharacteristics().getAmountOffspring());
+                int maxAmountAnimalClassInCell =
+                        island.getEntityIslandCharacteristicsMap().
+                                get(this.getEntityCharacteristics().getAnimalClass()).getMaxAmountAnimalInCell();
+                //4. Если кол-во животных данного типа + количество детенышей не превышает максимально
+                //   возможного числа животных этого типа
+                if (island.receiveAmountAnimalClassInCell(this.getPosition(),
+                        this.getEntityCharacteristics().getAnimalClass()) + springOff <= maxAmountAnimalClassInCell){
+                    for (int i = 0; i <springOff ; i++) {
+                        Entity entity1 = island.getEntityProducer().createEntity(this.getEntityCharacteristics().getAnimalClass());
+                        entity1.setPosition(this.getPosition());
+                        entity1.setIsland(this.island);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+                        //5. Создать новых животных данного типа
+                        //6. У родителей увеличить счетчик родительства
+
+
 
     }
 

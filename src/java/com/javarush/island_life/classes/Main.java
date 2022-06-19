@@ -2,12 +2,6 @@ package com.javarush.island_life.classes;
 
 
 import com.diogonunes.jcolor.Attribute;
-import com.javarush.island_life.classes.entity.Animal;
-import com.javarush.island_life.classes.entity.Entity;
-import com.javarush.island_life.classes.entity.Position;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
 
@@ -22,24 +16,24 @@ public class Main {
 
         island.viewEntityByIsland();
 
+        //System.exit(1);
 
-        //for (int k = 0; k < 33; k++)
-        int k=1;
-        while (k<=100?true:false)
-        {
-            System.out.println(colorize("Шаг "+ k, Attribute.GREEN_TEXT(), Attribute.NONE()));
+        int k = 1;
+        while (k <= 100 ? true : false) {
+            System.out.println(colorize("Шаг " + k, Attribute.GREEN_TEXT(), Attribute.NONE()));
             island.nextStep();
             //island.reUpdateIsland();
+            island.removeNotAliveEntities();
             island.viewEntityByIsland();
-            List<Animal> animalList = island.receiveAnimal();
-            if (animalList.size()==0) {
+
+            if (island.receiveAmountAnimal() == 0) {
                 return;
             }
             k++;
-            }
-
-
         }
+
+
+    }
 }
 
 

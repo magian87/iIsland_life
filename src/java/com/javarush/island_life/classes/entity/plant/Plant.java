@@ -6,5 +6,7 @@ import com.javarush.island_life.classes.settints.EntityCharacteristics;
 public class Plant extends Entity {
     public Plant(EntityCharacteristics entityCharacteristics) {
         super(entityCharacteristics);
+        this.setIsAlive(true);
     }
+
 }

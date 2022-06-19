@@ -8,6 +8,8 @@ public class EntityCharacteristics implements Cloneable {
     private String emoji;
     private String animalClass;
     private String className;
+    private int amountOffspring;
+    private int amountParented;
 
     public String getClassName() {
         return className;
@@ -17,7 +19,23 @@ public class EntityCharacteristics implements Cloneable {
         this.className = className;
     }
 
-    public EntityCharacteristics(double weight, int speed, double saturation, double currentSaturation, String emoji, String animalClass, String className) {
+    public int getAmountOffspring() {
+        return amountOffspring;
+    }
+
+    public int getAmountParented() {
+        return amountParented;
+    }
+
+    public void setAmountParented(int amountParented) {
+        this.amountParented = amountParented;
+    }
+
+    public void setAmountOffspring(int amountOffspring) {
+        this.amountOffspring = amountOffspring;
+    }
+
+    public EntityCharacteristics(double weight, int speed, double saturation, double currentSaturation, String emoji, String animalClass, String className, int amountOffspring, int amountParented) {
         this.weight = weight;
         this.speed = speed;
         this.saturation = saturation;
@@ -25,6 +43,8 @@ public class EntityCharacteristics implements Cloneable {
         this.emoji = emoji;
         this.animalClass = animalClass;
         this.className = className;
+        this.amountOffspring = amountOffspring;
+        this.amountParented = amountParented;
     }
 
     public EntityCharacteristics() {

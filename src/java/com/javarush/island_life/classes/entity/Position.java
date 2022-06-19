@@ -45,6 +45,7 @@ public class Position {
         }
     }
 
+
     private static Position receiveInstance(int x, int y) {
         for (Position position : positionList) {
             if (position.x == x && position.y == y){

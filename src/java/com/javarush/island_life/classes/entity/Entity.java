@@ -5,8 +5,19 @@ import com.javarush.island_life.classes.settints.EntityCharacteristics;
 
 public class Entity {
     private EntityCharacteristics entityCharacteristics;
-    Position position;
-    Island island;
+    private Position position;
+    private Island island;
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setIsAlive(boolean alive) {
+        isAlive = alive;
+    }
+
+    private boolean isAlive ;
+
 
     public Island getIsland() {
         return island;
