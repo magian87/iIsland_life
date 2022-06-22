@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
@@ -38,7 +41,7 @@ public class Island {
 
     private final Map<String, Map<String, Integer>> probabilityKillMap = new HashMap<>();
 
-    private List<Entity> natureIslandList = new ArrayList<>();
+    private List<Entity> natureIslandList = new CopyOnWriteArrayList<>();
 
     public Map<String, EntityIslandCharacteristics> getEntityIslandCharacteristicsMap() {
         return entityIslandCharacteristicsMap;
@@ -123,29 +126,33 @@ public class Island {
                 .count();
     }
 
-    public void fillEntity(String entityClass){
-        int maxAmountAnimal = ThreadLocalRandom.current().nextInt(entityIslandCharacteristicsMap.get(entityClass).getMaxAmountOfThisAnimal()+1);
+    public void fillEntity(String entityClass) {
+        int maxAmountAnimal = ThreadLocalRandom.current().nextInt(entityIslandCharacteristicsMap.get(entityClass).getMaxAmountOfThisAnimal() + 1);
         int maxAmountAnimalInCell = entityIslandCharacteristicsMap.get(entityClass).getMaxAmountAnimalInCell() - 1;
+
 
         for (int i = 0; i < maxAmountAnimal; i++) {
             Position position1;
             Random random = new Random();
             int x;
             int y;
+            int cntTry = 0;
             do {
-                x = random.nextInt(this.height);
-                y = random.nextInt(this.width);
+                x = ThreadLocalRandom.current().nextInt(this.height);
+                y = ThreadLocalRandom.current().nextInt(this.width);
                 position1 = Position.positionGetInstance(x, y);
+                cntTry++;
 
-            } while (receiveAmountAnimalClassInCell(position1, entityClass) > maxAmountAnimalInCell);
+            } while (receiveAmountAnimalClassInCell(position1, entityClass) > maxAmountAnimalInCell /*&& cntTry<20*/);
 
             Entity entity = entityProducer.createEntity(entityClass);
 
             entity.setPosition(position1);
             entity.setIsland(this);
-
             natureIslandList.add(entity);
+
         }
+
     }
 
     public void firstFillEntity() {
@@ -201,10 +208,6 @@ public class Island {
         }
     }
 
-    public void growPlan(){
-
-    }
-
     public int receiveAmountAnimal() {
         long result;
         result = natureIslandList.stream()
@@ -222,7 +225,7 @@ public class Island {
     }
 
     public void removeNotAliveEntities() {
-        natureIslandList.removeIf(entity -> !entity.isAlive());
+            natureIslandList.removeIf(entity -> !entity.isAlive());
     }
 
     public void addNewAnimal() {
@@ -239,12 +242,14 @@ public class Island {
                 entity.setPosition(animal.getPosition());
                 entity.setIsland(this);
                 natureIslandList.add(entity);
-                System.out.println(colorize("Родилось новое животно: " +
-                        animal.getEntityCharacteristics().getAnimalClass(), Attribute.BRIGHT_MAGENTA_TEXT(), Attribute.NONE()));
 
+                /*System.out.println(colorize("Родилось новое животно: " +
+                        animal.getEntityCharacteristics().getAnimalClass(), Attribute.BRIGHT_MAGENTA_TEXT(), Attribute.NONE()));
+*/
             }
 
         }
+
     }
 
     public Entity receivePairForReproduction(Entity entity) {
@@ -257,6 +262,53 @@ public class Island {
                 .filter(s -> !s.equals(entity))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void getStatistics() {
+
+            long cntPlant =
+                    natureIslandList.stream()
+                            .filter(s -> s.getEntityCharacteristics().getAnimalClass().equals("Plant"))
+                            .filter(Entity::isAlive)
+                            .count();
+
+            long cntAnimal =
+                    natureIslandList.stream()
+                            .filter(s -> !s.getEntityCharacteristics().getAnimalClass().equals("Plant"))
+                            .filter(Entity::isAlive)
+                            .count();
+
+            long cntDeadPlants =
+                    natureIslandList.stream()
+                            .filter(s -> s.getEntityCharacteristics().getAnimalClass().equals("Plant"))
+                            .filter(s -> !s.isAlive())
+                            .count();
+
+            long cntDeadAnimals =
+                    natureIslandList.stream()
+                            .filter(s -> !s.getEntityCharacteristics().getAnimalClass().equals("Plant"))
+                            .filter(s -> !s.isAlive())
+                            .count();
+
+            long cntNewAnimal =
+                    natureIslandList.stream()
+                            .filter(s -> s instanceof Animal)
+                            .map(s -> ((Animal) s))
+                            .filter(s -> s.getAmountSpringOff() > 0)
+                            .map(Animal::getAmountSpringOff)
+                            .reduce(0, Integer::sum);
+
+
+
+
+
+            String ss = "Кол-во растений = %d, кол-во съеденных растений = %d, кол-во животных = %d " +
+                    " исключая умерших\\убитых животных = %d, включая родившихся животных = %d  \n";
+            System.out.printf(ss, cntPlant, cntDeadPlants, cntAnimal+cntNewAnimal,  cntDeadAnimals, cntNewAnimal);
+
+
+
+
     }
 
 }

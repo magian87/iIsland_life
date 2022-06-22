@@ -1,17 +1,16 @@
 package com.javarush.island_life.classes.entity;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-//Правильно ли применен Singltone?
+
 //Можно отказаться от Equals & HashCode?
 public final class Position {
     private int x;
     private int y;
     private static final Position position = new Position();
-    private static List<Position> positionList = new LinkedList<>();
+    private static List<Position> positionList = new CopyOnWriteArrayList<>();
 
 
     public Position() {

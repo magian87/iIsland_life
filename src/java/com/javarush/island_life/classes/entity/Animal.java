@@ -100,8 +100,8 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
                 if (this.amountStepWithoutSaturation > DAYS_HUNGRY_DEAD - 1) {
                     this.setIsAlive(false);
-                    System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + this.getPosition() + " умер от голода ;"
-                            , Attribute.BRIGHT_CYAN_TEXT(), Attribute.NONE()));
+                    //System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + this.getPosition() + " умер от голода ;"
+                    //        , Attribute.BRIGHT_CYAN_TEXT(), Attribute.NONE()));
                     return; //Надо ли убирать и по другому выстраивать логику?
 
                 }
@@ -127,20 +127,20 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                     //island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell?
                     //      STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS:STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
 
-                    System.out.printf(STEP_INFO_CHANGE_DIRECTION_IN_WATHER, animalClass,
+                    /*System.out.printf(STEP_INFO_CHANGE_DIRECTION_IN_WATHER, animalClass,
                             this.getPosition().getX(), this.getPosition().getY(),
                             DirectionMove.values()[xx].name(),
                             this.getEntityCharacteristics().getCurrentSaturation()
-                    );
+                    );*/
                     //Логгер должен быть отдельно, как его перенести в другое место, если здесь происходит перемещение животного?
 
                 } else {
                     Position position1 = Position.positionGetInstance(x, y);
 
-                    System.out.printf(STEP_INFO, animalClass,
+                    /*System.out.printf(STEP_INFO, animalClass,
                             this.getPosition().getX(), this.getPosition().getY(),
                             position1.getX(), position1.getY(),
-                            this.getEntityCharacteristics().getCurrentSaturation());
+                            this.getEntityCharacteristics().getCurrentSaturation());*/
 
 
                     //А так вообще нормально, геттером записывать. обсуждали. Уберу отсюда island.getLandField
@@ -200,17 +200,20 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                         //   Если вероятность от 0 до вероятности из списка, то насытить животное
                         //   math.min(текущее насыщение + вес животного, максимальное насыщение)
                         if (0 <= probability1 && probability1 <= probability) {
+
                             this.getEntityCharacteristics()
                                     .setCurrentSaturation(
                                             Math.min(this.getEntityCharacteristics().getCurrentSaturation() + curWeight,
                                                     this.getEntityCharacteristics().getSaturation()));
-                            System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + " съел " + curAnimalClass + "  текущее насыщение: " + this.getEntityCharacteristics().getCurrentSaturation(), Attribute.BLUE_TEXT(), Attribute.NONE()));
+                            //System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + " съел " + curAnimalClass + "  текущее насыщение: " + this.getEntityCharacteristics().getCurrentSaturation(), Attribute.BLUE_TEXT(), Attribute.NONE()));
                             //6. Пометить животное как убитое, удалить из списка
                             entity.setIsAlive(false);
+
                         }
                     }
                 }
             }
+
         }
     }
 

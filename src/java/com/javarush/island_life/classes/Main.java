@@ -2,6 +2,14 @@ package com.javarush.island_life.classes;
 
 
 import com.diogonunes.jcolor.Attribute;
+import com.javarush.island_life.classes.threads.EndSimulation;
+import com.javarush.island_life.classes.threads.Grow;
+import com.javarush.island_life.classes.threads.LifeAnimals;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
 
@@ -14,25 +22,46 @@ public class Main {
         Island island = new Island();
         island.firstFillEntity();
 
-        island.viewEntityByIsland();
+        //island.viewEntityByIsland();
+        island.getStatistics();
 
         //System.exit(1);
 
-        int k = 1;
-        while (k <= 25 ? true : false) {
+
+
+
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
+
+        Runnable grow = new Grow(island);
+        Runnable lifeAnimal = new LifeAnimals(island);
+        Runnable endSimulation = new EndSimulation(island, ses);
+
+        ses.scheduleAtFixedRate(grow, 100, 500, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(lifeAnimal, 100, 500, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(endSimulation, 100, 500, TimeUnit.MILLISECONDS);
+
+
+ /*       int k = 1;
+        while (k <= 100 ? true : false) {
             System.out.println(colorize("Шаг " + k, Attribute.GREEN_TEXT(), Attribute.NONE()));
             island.nextStep();
-            //island.reUpdateIsland();
-            island.removeNotAliveEntities();
-            island.viewEntityByIsland();
-            island.addNewAnimal();
+
             island.fillEntity("Plant");
+
+            island.getStatistics();
+
+            island.removeNotAliveEntities();
+            island.addNewAnimal();
+            //System.out.println("!!!!!!!");
+            //island.getStatistics();
+            //island.viewEntityByIsland();
 
             if (island.receiveAmountAnimal() == 0) {
                 return;
             }
+
             k++;
-        }
+        }*/
 
 
     }
@@ -40,32 +69,8 @@ public class Main {
 
 
 
-/*Path path = Path.of("files//animalConfig1.properties");
-
-        Properties properties = new Properties();
-        try (FileReader fileReader = new FileReader(path.toAbsolutePath().toString())) {
-            properties.load(fileReader);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-"Horse": 10,
-    "Deer": 15,
-    "Rabbit": 60,
-    "Mouse": 80,
-    "Goat": 60,
-    "Sheep": 70,
-    "Boar":  15,
-    "Buffalo": 10,
-    "Duck": 40
 
 
-    /*
-         //jsonNode = objectMapper.readTree(Files.newBufferedReader(Path.of("settings//settingsIsland.json")));
-            //this.height = jsonNode.get("height").intValue();
-            //this.width = jsonNode.get("width").intValue();
-    * */
 
 
 

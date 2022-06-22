@@ -18,6 +18,21 @@ public class Refactoring {
                 .map(Map.Entry::getKey);
     }*/
 
+    //jsonNode = objectMapper.readTree(Files.newBufferedReader(Path.of("settings//settingsIsland.json")));
+    //this.height = jsonNode.get("height").intValue();
+    //this.width = jsonNode.get("width").intValue();
+
+    /*Path path = Path.of("files//animalConfig1.properties");
+
+        Properties properties = new Properties();
+        try (FileReader fileReader = new FileReader(path.toAbsolutePath().toString())) {
+            properties.load(fileReader);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
+
 /*
     Хищник не должен есть умерающее (умершее животное)
      //2. Получить список животных\растений на той же клетке (Убрать животных того же вида)
