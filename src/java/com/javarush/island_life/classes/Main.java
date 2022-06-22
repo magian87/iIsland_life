@@ -19,12 +19,14 @@ public class Main {
         //System.exit(1);
 
         int k = 1;
-        while (k <= 100 ? true : false) {
+        while (k <= 25 ? true : false) {
             System.out.println(colorize("Шаг " + k, Attribute.GREEN_TEXT(), Attribute.NONE()));
             island.nextStep();
             //island.reUpdateIsland();
             island.removeNotAliveEntities();
             island.viewEntityByIsland();
+            island.addNewAnimal();
+            island.fillEntity("Plant");
 
             if (island.receiveAmountAnimal() == 0) {
                 return;

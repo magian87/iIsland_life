@@ -22,16 +22,35 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
     private int amountParented;
     private int amountStepWithoutParent;
 
+    public int getAmountSpringOff() {
+        return amountSpringOff;
+    }
+
+    public void setAmountSpringOff(int amountSpringOff) {
+        this.amountSpringOff = amountSpringOff;
+    }
+
+    private int amountSpringOff;
+
     public Animal(EntityCharacteristics entityCharacteristics) {
         super(entityCharacteristics);
-        this.setIsAlive(true);
+        //this.setIsAlive(true);
         this.directionMove = DirectionMove.RIGHT;
         //Это нормально так описывать свойства, одни из настроек, другие для служебного пользования класса...????
         this.amountStepWithoutSaturation = 0;
         this.amountParented = 0;
         this.amountStepWithoutParent = 0;
+        this.amountSpringOff = 0;
+
     }
 
+    public int getAmountStepWithoutSaturation() {
+        return amountStepWithoutSaturation;
+    }
+
+    public void setAmountStepWithoutSaturation(int amountStepWithoutSaturation) {
+        this.amountStepWithoutSaturation = amountStepWithoutSaturation;
+    }
 
     public Island getIsland() {
         return island;
@@ -130,8 +149,14 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                     //но после того, как остальное будет сделано, т.к. времени уже мало...
                     this.setPosition(position1);
                     this.eat();
-                    this.reproduction();
 
+
+                }
+                if (i == this.getEntityCharacteristics().getSpeed()-1) {
+                    if (this.amountStepWithoutParent>0){
+                        this.amountStepWithoutSaturation--;
+                    }
+                    this.reproduction();
                 }
             }
         }
@@ -199,7 +224,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
         //Количество размножений за игру указывается в настройках - доработать
 
         //1. Проверить если насыщение больше 0
-        if (receiveSaturationByAnimal(this)>0){
+        if (receiveSaturationByAnimal(this)>0 && this.amountStepWithoutParent==0){
             //2. Проверить есть ли другие животные такого же типа на этой клетке с насыщением больше 0
             Entity entity = island.receivePairForReproduction(this);
             if (entity != null){
@@ -213,7 +238,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                 //   возможного числа животных этого типа
                 if (island.receiveAmountAnimalClassInCell(this.getPosition(),
                         this.getEntityCharacteristics().getAnimalClass()) + springOff <= maxAmountAnimalClassInCell){
-                    for (int i = 0; i <springOff ; i++) {
+/*                    for (int i = 0; i <springOff ; i++) {
                         Entity entity1 = island.getEntityProducer().createEntity(this.getEntityCharacteristics().getAnimalClass());
                         entity1.setPosition(this.getPosition());
                         entity1.setIsland(this.island);
@@ -221,10 +246,14 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
                         System.out.println(colorize("Родилось новое животно: " +
                                 entity1.getEntityCharacteristics().getAnimalClass(), Attribute.BRIGHT_MAGENTA_TEXT() , Attribute.NONE()));
-                    }
-                    this.amountParented = this.amountParented + springOff;
+                    }*/
+                    this.amountParented = this.amountParented + 1;
                     this.amountStepWithoutParent = AMOUNT_WITHOUT_REPRODUCTION;
+                    this.amountSpringOff = springOff;
 
+                    Animal animal = ((Animal) entity);
+                    animal.amountParented = animal.amountParented + 1;
+                    animal.amountStepWithoutParent = AMOUNT_WITHOUT_REPRODUCTION;
                 }
 
             }

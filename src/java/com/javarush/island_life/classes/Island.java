@@ -1,6 +1,7 @@
 package com.javarush.island_life.classes;
 
 
+import com.diogonunes.jcolor.Attribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javarush.island_life.classes.comparators.EntityComparator;
 import com.javarush.island_life.classes.entity.Animal;
@@ -16,7 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+
+import static com.diogonunes.jcolor.Ansi.colorize;
 
 public class Island {
 
@@ -41,9 +45,20 @@ public class Island {
     }
 
 
-    private Map<String, EntityIslandCharacteristics> entityIslandCharacteristicsMap
-            = new HashMap<>();
+    private Map<String, EntityIslandCharacteristics> entityIslandCharacteristicsMap;
 
+
+    public List<Entity> getNatureIslandList() {
+        return natureIslandList;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 
     {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -101,51 +116,41 @@ public class Island {
     }
 
 
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public List<Entity> getNatureIslandList() {
-        return natureIslandList;
-    }
-
     public long receiveAmountAnimalClassInCell(Position position, String animalClass) {
-         return natureIslandList.stream()
-                 .filter(s->s.getPosition().equals(position))
-                 .filter(s-> s.getEntityCharacteristics().getAnimalClass().equals(animalClass))
-                 .count();
+        return natureIslandList.stream()
+                .filter(s -> s.getPosition().equals(position))
+                .filter(s -> s.getEntityCharacteristics().getAnimalClass().equals(animalClass))
+                .count();
+    }
+
+    public void fillEntity(String entityClass){
+        int maxAmountAnimal = ThreadLocalRandom.current().nextInt(entityIslandCharacteristicsMap.get(entityClass).getMaxAmountOfThisAnimal()+1);
+        int maxAmountAnimalInCell = entityIslandCharacteristicsMap.get(entityClass).getMaxAmountAnimalInCell() - 1;
+
+        for (int i = 0; i < maxAmountAnimal; i++) {
+            Position position1;
+            Random random = new Random();
+            int x;
+            int y;
+            do {
+                x = random.nextInt(this.height);
+                y = random.nextInt(this.width);
+                position1 = Position.positionGetInstance(x, y);
+
+            } while (receiveAmountAnimalClassInCell(position1, entityClass) > maxAmountAnimalInCell);
+
+            Entity entity = entityProducer.createEntity(entityClass);
+
+            entity.setPosition(position1);
+            entity.setIsland(this);
+
+            natureIslandList.add(entity);
+        }
     }
 
     public void firstFillEntity() {
         for (String classAnimal : entityProducer.receiveEntity()) {
-
-            int maxAmountAnimal = entityIslandCharacteristicsMap.get(classAnimal).getMaxAmountOfThisAnimal();
-            int maxAmountAnimalInCell = entityIslandCharacteristicsMap.get(classAnimal).getMaxAmountAnimalInCell() - 1;
-
-            for (int i = 0; i < maxAmountAnimal; i++) {
-                Position position1;
-                Random random = new Random();
-                int x;
-                int y;
-                do {
-                    x = random.nextInt(this.height);
-                    y = random.nextInt(this.width);
-                    position1 = Position.positionGetInstance(x, y);
-
-                } while (receiveAmountAnimalClassInCell(position1, classAnimal) > maxAmountAnimalInCell);
-
-                Entity entity = entityProducer.createEntity(classAnimal);
-
-                entity.setPosition(position1);
-                entity.setIsland(this);
-
-                natureIslandList.add(entity);
-            }
+            fillEntity(classAnimal);
         }
     }
 
@@ -157,16 +162,6 @@ public class Island {
                 .stream()
                 .max(Comparator.comparing(Long::valueOf))
                 .orElse(0L);
-        /*
-                double result = natureIslandList.stream()
-                .collect(Collectors.groupingBy(
-                        Entity::getPosition, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .map(s -> s.getValue())
-                .max(Comparator.comparing(Long::valueOf))
-                .orElse(0L);
-        * */
         return ((int) result);
     }
 
@@ -189,9 +184,7 @@ public class Island {
 
         StringBuilder stringBuilder = new StringBuilder("   ");
         for (int i = 0; i < width; i++) {
-
-            stringBuilder.append("[" + i + "   ".repeat(maxLength>0?maxLength/2:0) + "]");
-            //stringBuilder.append("[" + i + "   ".repeat(maxLength) + "]");
+            stringBuilder.append("[" + i + "   ".repeat(maxLength > 0 ? maxLength / 2 : 0) + "]");
         }
         System.out.println(stringBuilder);
 
@@ -201,24 +194,28 @@ public class Island {
                 Position position = Position.positionGetInstance(i, j);
                 String curEmojis = receiveEmojisByPosition(position);
                 // делю на два, т.к. длина одного эмоджи 2 знака, можно было конечно еще один стрим сделать...
-                String ss = "[%s" + "  ".repeat(maxLength - curEmojis.length()/2) + "]";
+                String ss = "[%s" + "  ".repeat(maxLength - curEmojis.length() / 2) + "]";
                 System.out.printf(ss, curEmojis);
             }
             System.out.println();
         }
     }
 
-    public int receiveAmountAnimal(){
+    public void growPlan(){
+
+    }
+
+    public int receiveAmountAnimal() {
         long result;
         result = natureIslandList.stream()
-                .filter(s->!s.getEntityCharacteristics().getAnimalClass().equals("Plant"))
+                .filter(s -> !s.getEntityCharacteristics().getAnimalClass().equals("Plant"))
                 .count();
         return ((int) result);
     }
 
     public void nextStep() {
         for (Entity entity : natureIslandList) {
-            if (entity instanceof Animal animal){
+            if (entity instanceof Animal animal) {
                 animal.step();
             }
         }
@@ -228,216 +225,38 @@ public class Island {
         natureIslandList.removeIf(entity -> !entity.isAlive());
     }
 
-    public Entity receivePairForReproduction(Entity entity){
+    public void addNewAnimal() {
+        List<Animal> parentAnimal =
+                natureIslandList.stream()
+                        .filter(s -> s instanceof Animal)
+                        .map(s -> ((Animal) s))
+                        .filter(s -> s.getAmountSpringOff() > 0)
+                        .collect(Collectors.toList());
+
+        for (Animal animal : parentAnimal) {
+            for (int i = 0; i < animal.getAmountSpringOff(); i++) {
+                Entity entity = entityProducer.createEntity(animal.getEntityCharacteristics().getAnimalClass());
+                entity.setPosition(animal.getPosition());
+                entity.setIsland(this);
+                natureIslandList.add(entity);
+                System.out.println(colorize("Родилось новое животно: " +
+                        animal.getEntityCharacteristics().getAnimalClass(), Attribute.BRIGHT_MAGENTA_TEXT(), Attribute.NONE()));
+
+            }
+
+        }
+    }
+
+    public Entity receivePairForReproduction(Entity entity) {
         return natureIslandList.stream()
-                .filter(s->s.getPosition().equals(entity.getPosition()))
-                .filter(s->s.getEntityCharacteristics().getAnimalClass()
+                .filter(s -> s.getPosition().equals(entity.getPosition()))
+                .filter(s -> s.getEntityCharacteristics().getAnimalClass()
                         .equals(entity.getEntityCharacteristics().getAnimalClass()))
-                .filter(s->s.getEntityCharacteristics().getCurrentSaturation()!=0)
-                .filter(s->!s.equals(entity))
+                .filter(s -> s.getEntityCharacteristics().getCurrentSaturation() != 0)
+                .filter(s -> ((Animal) s).getAmountStepWithoutSaturation() == 0)
+                .filter(s -> !s.equals(entity))
                 .findFirst()
                 .orElse(null);
     }
-
-
-
-/*
-    public void receiveTTT() {
-        System.out.println("@@@@@@");
-
-*/
-/*        List<Entity> ll =
-        natureIslandList.stream()
-                .collect(Collectors.groupingBy(
-                        s -> s.getPosition(), Collectors.counting()));*//*
-
-
-
-        System.out.println(natureIslandList.stream()
-                .collect(Collectors.groupingBy(
-                        s -> s.getPosition(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .map(s -> s.getValue())
-                .max(Comparator.comparing(Long::valueOf))
-                .get());
-
-
-
-                */
-/*System.out.println(natureIslandList.stream()
-                        .collect(Collectors.groupingBy(s -> s.getPosition()))
-                );*//*
-
-
-        System.out.println(natureIslandList.stream()
-                .collect(Collectors.groupingBy(
-                        s -> s.getEntityCharacteristics().getAnimalClass(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(s1 -> s1.getKey(), s1 -> s1.getValue())));
-        //.forEach((ss, count) -> System.out.println(ss + " " + count));
-
-    }
-
-    public void test() {
-       */
-/* System.out.println(natureIslandList.stream()
-                .collect(Collectors.groupingBy(s -> s.getEntityCharacteristics().getAnimalClass())));*//*
-
-
-        //Уникальные сущности
-        natureIslandList.stream()
-                .map(s -> s.getEntityCharacteristics().getAnimalClass())
-                .distinct()
-                //.sorted(Comparator.comparing(s->s.com))
-                .forEach(System.out::println);
-
-        //Map количество сущностей каждого типа
-
-        System.out.println(natureIslandList.stream()
-                .collect(Collectors.groupingBy(
-                        s -> s.getEntityCharacteristics().getAnimalClass(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(s1 -> s1.getKey(), s1 -> s1.getValue())));
-        //.forEach((ss, count) -> System.out.println(ss + " " + count));
-
-        natureIslandList.stream()
-                .collect(Collectors.groupingBy(
-                        s -> s.getEntityCharacteristics().getAnimalClass(), Collectors.counting()))
-                //.entrySet()
-                //.stream()
-                //.collect(Collectors.toMap(s1 -> s1.getKey(), s1 -> s1.getValue())));
-                .forEach((ss, count) -> System.out.println(ss + " " + count));
-
-
-        Position position = Position.positionGetInstance(0, 0);
-
-        Map<String, Long> ll =
-                natureIslandList.stream()
-                        .filter(s -> s.getPosition().equals(position))
-                        .collect(Collectors.groupingBy(
-                                s -> s.getEntityCharacteristics().getAnimalClass(), Collectors.counting()))
-                        .entrySet()
-                        .stream()
-                        .collect(Collectors.toMap(s -> s.getKey(), s -> s.getValue()));
-        System.out.println(ll);
-
-        System.out.println("!!!");
-
-
-        System.out.println(natureIslandList.stream()
-                .filter(s -> s.getPosition().equals(position))
-                .sorted(new EntityComparator())
-                .map(s -> s.getEntityCharacteristics().getEmoji())
-                .collect(Collectors.joining(", ")));
-
-        //.toList());
-
-
-
-
-
-
-*/
-/*        System.out.println(natureIslandList.stream()
-                .collect(Collectors.toMap(
-                        s -> s.getPosition(),
-                        s -> s.getEntityCharacteristics().getAnimalClass(),
-                        (a, b) -> String.join(", ", a, b)
-                )));*//*
-
-    }
-*/
-
-
-/*    public void removeDeadAnimal(){
-        List<Animal> animalList = receiveAnimal();
-        for (Animal animal : animalList) {
-            if (animal.isDead()){
-                landField.get(animal.getPosition()).remove(animal);
-            }
-        }
-    }*/
-
-    /*//Заготовка что бы убрать обращение к island.landField из класса Animal
-    public void reUpdateIsland() {
-        //Получить список животных
-        List<Animal> animalList = receiveAnimal();
-        for (Animal animal : animalList) {
-            List<Entity> animalList1 = landField.get(animal.getPosition());
-            animalList1.add(animal);
-        }
-
-
-        for (int i = 0; i < getHeight(); i++) {
-            for (int j = 0; j < getWidth(); j++) {
-                Iterator<Entity> entityIterator = landField.get(Position.positionGetInstance(i, j)).iterator();
-
-                while (entityIterator.hasNext()) {
-                    Entity nextEntity = entityIterator.next();
-                    if (nextEntity instanceof Animal) {
-                        Animal animal = ((Animal) nextEntity);
-                        long cnt =
-                                animalList.stream()
-                                        .filter(s->s.equals(animal))
-                                        .count();
-                        if (cnt>0){
-                            if (Position.positionGetInstance(i,j)!=animal.getPosition()) {
-                                entityIterator.remove();
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        //Пройтись по острову, если животное входит в List-> Map<Position, List<Animal>> сверить позицию
-        // (животного и остров-животное, если очищается, очистить из массива <Animal> по позиции
-
-
-    }*/
-
-    /*
-    public void viewEntityByIsland() {
-        int max = 0;
-        for (Position position : landField.keySet()) {
-            int size = landField.get(position).size();
-            max = Math.max(max, size);
-        }
-        System.out.println("---------------------------------");
-        StringBuilder stringBuilder0 = new StringBuilder("   ");
-        for (int i = 0; i < width; i++) {
-            stringBuilder0.append("[" + i + "  ".repeat(max == 0 ? 0 : max - 1) + " ]");
-        }
-        System.out.println(stringBuilder0);
-
-        for (int i = 0; i < height; i++) {
-            System.out.format("%3d", i);
-            for (int j = 0; j < width; j++) {
-                Position position1 = Position.positionGetInstance(i, j);
-                int cntAnimal = 0;
-                StringBuilder stringBuilder = new StringBuilder();
-                for (Entity entity : landField.get(position1)) {
-                    stringBuilder.append(entity.getEntityCharacteristics().getEmoji()).append(",");
-                    cntAnimal++;
-                }
-                if (stringBuilder.isEmpty()) {
-                    stringBuilder.append("[" + "  ".repeat(max) + "]");
-                } else {
-                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                    stringBuilder.insert(0, "[");
-                    stringBuilder.append("  ".repeat(max - cntAnimal));
-                    stringBuilder.append("]");
-
-                }
-                System.out.print(stringBuilder);
-            }
-            //System.out.print(i);
-            System.out.println();
-        }
-    }
-*/
 
 }

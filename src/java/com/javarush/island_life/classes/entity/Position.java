@@ -7,10 +7,12 @@ import java.util.Objects;
 
 //Правильно ли применен Singltone?
 //Можно отказаться от Equals & HashCode?
-public class Position {
+public final class Position {
     private int x;
     private int y;
     private static final Position position = new Position();
+    private static List<Position> positionList = new LinkedList<>();
+
 
     public Position() {
     }
@@ -30,8 +32,6 @@ public class Position {
                 ", y=" + y +
                 '}';
     }
-
-    private static List<Position> positionList = new LinkedList<>();
 
     //Singleton
     public static Position positionGetInstance(int x, int y) {

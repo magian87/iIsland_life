@@ -3,8 +3,8 @@
 
   "islandCharacteristics": [
     {
-      "height": 5,
-      "width": 5
+      "height": 10,
+      "width": 10
     }
   ],
 
@@ -298,67 +298,67 @@
   "entityIslandCharacteristics": [
     {
       "animalClass": "Plant",
-      "maxAmountAnimalInCell": 25,
-      "maxAmountOfThisAnimal": 5
+      "maxAmountAnimalInCell": 200,
+      "maxAmountOfThisAnimal": 30
     },
     {
       "animalClass": "Wolf",
-      "maxAmountAnimalInCell": 10,
-      "maxAmountOfThisAnimal": 10
+      "maxAmountAnimalInCell": 30,
+      "maxAmountOfThisAnimal": 5
     },
     {
       "animalClass": "Snake",
-      "maxAmountAnimalInCell": 25,
+      "maxAmountAnimalInCell": 30,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Fox",
       "maxAmountAnimalInCell": 30,
-      "maxAmountOfThisAnimal": 0
+      "maxAmountOfThisAnimal": 3
     },
     {
       "animalClass": "Bear",
-      "maxAmountAnimalInCell": 25,
+      "maxAmountAnimalInCell": 5,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Eagle",
-      "maxAmountAnimalInCell": 15,
+      "maxAmountAnimalInCell": 20,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Horse",
-      "maxAmountAnimalInCell": 10,
+      "maxAmountAnimalInCell": 20,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Deer",
-      "maxAmountAnimalInCell": 10,
+      "maxAmountAnimalInCell": 20,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Rabbit",
-      "maxAmountAnimalInCell": 10,
-      "maxAmountOfThisAnimal": 0
+      "maxAmountAnimalInCell": 150,
+      "maxAmountOfThisAnimal": 5
     },
     {
       "animalClass": "Mouse",
-      "maxAmountAnimalInCell": 10,
-      "maxAmountOfThisAnimal": 0
+      "maxAmountAnimalInCell": 500,
+      "maxAmountOfThisAnimal": 5
     },
     {
       "animalClass": "Goat",
-      "maxAmountAnimalInCell": 10,
+      "maxAmountAnimalInCell": 140,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Sheep",
-      "maxAmountAnimalInCell": 10,
+      "maxAmountAnimalInCell": 140,
       "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Boar",
-      "maxAmountAnimalInCell": 10,
+      "maxAmountAnimalInCell": 50,
       "maxAmountOfThisAnimal": 0
     },
     {
@@ -368,13 +368,13 @@
     },
     {
       "animalClass": "Duck",
-      "maxAmountAnimalInCell": 10,
-      "maxAmountOfThisAnimal": 5
+      "maxAmountAnimalInCell": 200,
+      "maxAmountOfThisAnimal": 0
     },
     {
       "animalClass": "Caterpillar",
-      "maxAmountAnimalInCell": 15,
-      "maxAmountOfThisAnimal": 0
+      "maxAmountAnimalInCell": 1000,
+      "maxAmountOfThisAnimal": 10
     }
   ],
 

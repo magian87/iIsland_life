@@ -7,6 +7,9 @@ public class Entity {
     private EntityCharacteristics entityCharacteristics;
     private Position position;
     private Island island;
+    private boolean isAlive;
+    private boolean isNewEntity;
+
 
     public boolean isAlive() {
         return isAlive;
@@ -15,8 +18,6 @@ public class Entity {
     public void setIsAlive(boolean alive) {
         isAlive = alive;
     }
-
-    private boolean isAlive ;
 
 
     public Island getIsland() {
@@ -35,8 +36,22 @@ public class Entity {
         this.position = position;
     }
 
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
+    public boolean isNewEntity() {
+        return isNewEntity;
+    }
+
+    public void setNewEntity(boolean newEntity) {
+        isNewEntity = newEntity;
+    }
+
     public Entity(EntityCharacteristics entityCharacteristics) {
         this.entityCharacteristics = entityCharacteristics;
+        this.isAlive = true;
+        this.isNewEntity = false;
     }
 
     public EntityCharacteristics getEntityCharacteristics() {
