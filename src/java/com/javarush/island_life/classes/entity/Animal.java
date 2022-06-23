@@ -9,7 +9,7 @@ import com.javarush.island_life.classes.settints.EntityProducer;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
 import static com.javarush.island_life.classes.ConstantIsland.*;
@@ -18,6 +18,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
     public DirectionMove getDirectionMove() {
         return directionMove;
     }
+
     private int amountStepWithoutSaturation;
     private int amountParented;
     private int amountStepWithoutParent;
@@ -34,14 +35,12 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
     public Animal(EntityCharacteristics entityCharacteristics) {
         super(entityCharacteristics);
-        //this.setIsAlive(true);
         this.directionMove = DirectionMove.RIGHT;
         //Это нормально так описывать свойства, одни из настроек, другие для служебного пользования класса...????
         this.amountStepWithoutSaturation = 0;
         this.amountParented = 0;
         this.amountStepWithoutParent = 0;
         this.amountSpringOff = 0;
-
     }
 
     public int getAmountStepWithoutSaturation() {
@@ -84,20 +83,22 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                     case BOTTOM -> x++;
                 }
 
-                //А вот так делать правильно? Как получить границы острова?
                 String animalClass = this.getEntityCharacteristics().getAnimalClass();
                 int maxAmountAnimalInCell =
                         island.getEntityIslandCharacteristicsMap().get(animalClass).getMaxAmountAnimalInCell() - 1;
 
+                //Уменьшение насыщения
                 double currentSaturation = this.getEntityCharacteristics().getCurrentSaturation();
                 if (currentSaturation > 0) {
                     double reductionSaturation = (this.getEntityCharacteristics().getSaturation() * REDUCTION_SATURATION / this.getEntityCharacteristics().getSpeed());
                     this.getEntityCharacteristics().setCurrentSaturation(Math.max(currentSaturation - reductionSaturation, 0));
                 }
+                //Если насыщение ==0, подсчет кол-во шагов без пищи
                 if (currentSaturation == 0) {
                     this.amountStepWithoutSaturation++;
                 }
 
+                //Если кол-во шагов без пищи > DAYS_HUNGRY_DEAD - 1 то пометка животного - умер
                 if (this.amountStepWithoutSaturation > DAYS_HUNGRY_DEAD - 1) {
                     this.setIsAlive(false);
                     //System.out.println(colorize(this.getEntityCharacteristics().getAnimalClass() + this.getPosition() + " умер от голода ;"
@@ -113,47 +114,25 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
                 ) {
 
-                    Random random = new Random();
-                    int xx;
-                    do {
-                        xx = random.nextInt(DirectionMove.values().length);
-
-                    } while (DirectionMove.values()[xx] == this.directionMove);
-
-                    this.directionMove = DirectionMove.values()[xx];
-
-                    //УБРАТЬ ЭТО ДУБЛИРОВАНИЕ КОДА!!!
-                    //String str = STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
-                    //island.getAmountAnimalClassInCell(Position.positionGetInstance(x,y),animalClass) > maxAmountAnimalInCell?
-                    //      STEP_INFO_CHANGE_DIRECTION_MAX_AMOUNT_ANIMAL_THIS_CLASS:STEP_INFO_CHANGE_DIRECTION_IN_WATHER;
-
+                    this.choiceOfDirection();
                     /*System.out.printf(STEP_INFO_CHANGE_DIRECTION_IN_WATHER, animalClass,
                             this.getPosition().getX(), this.getPosition().getY(),
                             DirectionMove.values()[xx].name(),
                             this.getEntityCharacteristics().getCurrentSaturation()
                     );*/
-                    //Логгер должен быть отдельно, как его перенести в другое место, если здесь происходит перемещение животного?
 
                 } else {
                     Position position1 = Position.positionGetInstance(x, y);
-
                     /*System.out.printf(STEP_INFO, animalClass,
                             this.getPosition().getX(), this.getPosition().getY(),
                             position1.getX(), position1.getY(),
                             this.getEntityCharacteristics().getCurrentSaturation());*/
-
-
-                    //А так вообще нормально, геттером записывать. обсуждали. Уберу отсюда island.getLandField
-                    //см. island.reUpdateIsland(), буду задавать позицию животного, и в соответсвии с этой позицией
-                    //приводить остров к актуальному состоянию
-                    //но после того, как остальное будет сделано, т.к. времени уже мало...
                     this.setPosition(position1);
                     this.eat();
-
-
                 }
-                if (i == this.getEntityCharacteristics().getSpeed()-1) {
-                    if (this.amountStepWithoutParent>0){
+                //Если последний шаг и насыщение больше 0 попробовать размножиться
+                if (i == this.getEntityCharacteristics().getSpeed() - 1) {
+                    if (this.amountStepWithoutParent > 0) {
                         this.amountStepWithoutSaturation--;
                     }
                     this.reproduction();
@@ -175,6 +154,8 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
                 //5. Если насыщение=максимальное насыщение выйти из процедуры, иначе съесть других животных
                 if (this.getEntityCharacteristics().getCurrentSaturation() == this.getEntityCharacteristics().getSaturation()) {
                     return;
+                    //!!!!!!!!!!!!!!!!!А так нормально вообще выходить?
+
                 }
                 //6. Животное может есть данную сущность (животное, растение), кинуть вероятность полученную из мапы
 
@@ -195,8 +176,7 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
                 if (entity.isAlive()) {
                     if (probability > 0) {
-                        Random random = new Random();
-                        int probability1 = random.nextInt(probability);
+                        int probability1 = ThreadLocalRandom.current().nextInt(probability);
                         //   Если вероятность от 0 до вероятности из списка, то насытить животное
                         //   math.min(текущее насыщение + вес животного, максимальное насыщение)
                         if (0 <= probability1 && probability1 <= probability) {
@@ -227,31 +207,23 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
         //Количество размножений за игру указывается в настройках - доработать
 
         //1. Проверить если насыщение больше 0
-        if (receiveSaturationByAnimal(this)>0 && this.amountStepWithoutParent==0){
+        if (receiveSaturationByAnimal(this) > 0 && this.amountStepWithoutParent == 0) {
             //2. Проверить есть ли другие животные такого же типа на этой клетке с насыщением больше 0
             Entity entity = island.receivePairForReproduction(this);
-            if (entity != null){
-                Random random = new Random();
+            if (entity != null) {
                 //3. Получить кол-во детенышей по рэндому от кол-во возможного приплода
-                int springOff = random.nextInt(this.getEntityCharacteristics().getAmountOffspring());
+                int springOff = ThreadLocalRandom.current().nextInt(this.getEntityCharacteristics().getAmountOffspring());
                 int maxAmountAnimalClassInCell =
                         island.getEntityIslandCharacteristicsMap().
                                 get(this.getEntityCharacteristics().getAnimalClass()).getMaxAmountAnimalInCell();
                 //4. Если кол-во животных данного типа + количество детенышей не превышает максимально
                 //   возможного числа животных этого типа
                 if (island.receiveAmountAnimalClassInCell(this.getPosition(),
-                        this.getEntityCharacteristics().getAnimalClass()) + springOff <= maxAmountAnimalClassInCell){
-/*                    for (int i = 0; i <springOff ; i++) {
-                        Entity entity1 = island.getEntityProducer().createEntity(this.getEntityCharacteristics().getAnimalClass());
-                        entity1.setPosition(this.getPosition());
-                        entity1.setIsland(this.island);
-                        island.getNatureIslandList().add(entity1);
-
-                        System.out.println(colorize("Родилось новое животно: " +
-                                entity1.getEntityCharacteristics().getAnimalClass(), Attribute.BRIGHT_MAGENTA_TEXT() , Attribute.NONE()));
-                    }*/
+                        this.getEntityCharacteristics().getAnimalClass()) + springOff <= maxAmountAnimalClassInCell) {
                     this.amountParented = this.amountParented + 1;
+                    //5. Установить количество ходов без размножения
                     this.amountStepWithoutParent = AMOUNT_WITHOUT_REPRODUCTION;
+                    //6. Поставить пометку о потомстве
                     this.amountSpringOff = springOff;
 
                     Animal animal = ((Animal) entity);
@@ -262,16 +234,15 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
             }
 
         }
-
-                        //5. Создать новых животных данного типа
-                        //6. У родителей увеличить счетчик родительства
-
-
-
     }
 
     public void choiceOfDirection() {
+        int xx;
+        do {
+            xx = ThreadLocalRandom.current().nextInt(DirectionMove.values().length);
 
+        } while (DirectionMove.values()[xx] == this.directionMove);
+        this.directionMove = DirectionMove.values()[xx];
     }
 
 
@@ -289,12 +260,4 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
 
     }
-
-    /*public Animal clone() throws CloneNotSupportedException {
-        Animal animal = (Animal) super.clone();
-        //А надо ли, если у животных одного вида будут одинаковые параметры?
-        //animal.se
-        return animal;
-
-    }*/
 }
