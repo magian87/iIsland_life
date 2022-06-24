@@ -261,3 +261,4 @@ public abstract class Animal extends Entity /*implements Cloneable*/ {
 
     }
 }
+
