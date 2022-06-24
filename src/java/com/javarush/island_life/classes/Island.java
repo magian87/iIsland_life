@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
+import static com.javarush.island_life.classes.ConstantIsland.STATISTIC_INFO;
 
 public class Island {
 
@@ -38,7 +39,6 @@ public class Island {
 
     private final EntityProducer entityProducer;
 
-
     private final Map<String, Map<String, Integer>> probabilityKillMap = new HashMap<>();
 
     private List<Entity> natureIslandList = new CopyOnWriteArrayList<>();
@@ -47,9 +47,7 @@ public class Island {
         return entityIslandCharacteristicsMap;
     }
 
-
-    private Map<String, EntityIslandCharacteristics> entityIslandCharacteristicsMap;
-
+    private final Map<String, EntityIslandCharacteristics> entityIslandCharacteristicsMap;
 
     public List<Entity> getNatureIslandList() {
         return natureIslandList;
@@ -133,7 +131,6 @@ public class Island {
 
         for (int i = 0; i < maxAmountAnimal; i++) {
             Position position1;
-            Random random = new Random();
             int x;
             int y;
             int cntTry = 0;
@@ -298,17 +295,10 @@ public class Island {
                             .map(Animal::getAmountSpringOff)
                             .reduce(0, Integer::sum);
 
-
-
-
-
             String ss = "Кол-во растений = %d, кол-во съеденных растений = %d, кол-во животных = %d " +
                     " исключая умерших\\убитых животных = %d, включая родившихся животных = %d  \n";
-            System.out.printf(ss, cntPlant, cntDeadPlants, cntAnimal+cntNewAnimal,  cntDeadAnimals, cntNewAnimal);
-
-
-
-
+            System.out.printf(STATISTIC_INFO, cntPlant, cntDeadPlants, cntAnimal+cntNewAnimal,  cntDeadAnimals, cntNewAnimal);
     }
 
 }
+
