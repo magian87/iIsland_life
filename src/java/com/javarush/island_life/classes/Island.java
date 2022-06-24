@@ -66,7 +66,7 @@ public class Island {
         try {
 
             entitySettings = objectMapper.readValue(
-                    Files.newBufferedReader(Path.of("settings//entity2.json")), EntitySettings.class);
+                    Files.newBufferedReader(Path.of("settings//entity.json")), EntitySettings.class);
 
 
             for (EatCharacteristics eatCharacteristic : entitySettings.getEatCharacteristics()) {
